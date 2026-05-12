@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="知乎吹牛逼鉴定局：你能分清社区高赞、AI仿深刻和纯吹牛逼吗？"
+    />
+    <title>知乎吹牛逼鉴定局</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23191815%22/%3E%0A%20%20%3Crect%20x%3D%229%22%20y%3D%229%22%20width%3D%2246%22%20height%3D%2246%22%20fill%3D%22%23c8ff3d%22%20stroke%3D%22%23fffaf0%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cpath%20d%3D%22M20%2022h24v7H20zm0%2013h16v7H20z%22%20fill%3D%22%23191815%22/%3E%0A%3C/svg%3E%0A" type="image/svg+xml" />
+    <style>
+:root {
+  --paper: #f6f0e3;
+  --ink: #191815;
+  --muted: #6f6758;
+  --line: #2b2924;
+  --acid: #c8ff3d;
+  --coral: #ff674d;
+  --cyan: #55d9ff;
+  --gold: #ffcc48;
+  --white: #fffaf0;
+  --shadow: 0 22px 70px rgba(25, 24, 21, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background:
+    linear-gradient(90deg, rgba(25, 24, 21, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(25, 24, 21, 0.05) 1px, transparent 1px),
+    var(--paper);
+  background-size: 28px 28px;
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  width: min(1480px, calc(100vw - 32px));
+  min-height: calc(100vh - 32px);
+  margin: 16px auto;
+}
+
+.stage,
+.side-lab {
+  border: 2px solid var(--line);
+  background: rgba(255, 250, 240, 0.84);
+  box-shadow: var(--shadow);
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 32px);
+}
+
+.masthead {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 30px 20px;
+  border-bottom: 2px solid var(--line);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.eyebrow,
+.kicker {
+  margin: 0 0 8px;
+  color: var(--coral);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.masthead .eyebrow {
+  color: var(--acid);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 860px;
+  margin-bottom: 0;
+  font-size: clamp(40px, 7vw, 92px);
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 14px;
+  font-size: clamp(28px, 4vw, 56px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+h3 {
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+
+p,
+li,
+label {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+strong {
+  color: var(--ink);
+}
+
+.score-pill {
+  flex: 0 0 auto;
+  min-width: 92px;
+  padding: 10px 14px;
+  border: 2px solid var(--acid);
+  color: var(--acid);
+  font-weight: 900;
+  text-align: center;
+}
+
+.intro,
+.game,
+.result {
+  padding: 30px;
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 24px;
+  align-items: end;
+  min-height: 430px;
+}
+
+.intro-copy {
+  max-width: 860px;
+}
+
+.intro-copy p:last-child {
+  max-width: 720px;
+  margin-bottom: 0;
+  font-size: 20px;
+}
+
+.intro-actions,
+.share-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.primary-button,
+.ghost-button {
+  min-height: 52px;
+  border: 2px solid var(--line);
+  padding: 13px 18px;
+  color: var(--ink);
+  font-weight: 900;
+  box-shadow: 6px 6px 0 var(--line);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.primary-button {
+  background: var(--acid);
+}
+
+.ghost-button {
+  background: var(--white);
+}
+
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.primary-button:not(:disabled):hover,
+.ghost-button:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 3px 3px 0 var(--line);
+}
+
+.round-meta {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 22px;
+  font-weight: 900;
+}
+
+.progress-track {
+  height: 14px;
+  border: 2px solid var(--line);
+  background: var(--white);
+}
+
+.progress-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral), var(--gold), var(--acid));
+  transition: width 220ms ease;
+}
+
+.question-block {
+  display: grid;
+  gap: 2px;
+  padding: 22px;
+  border: 2px solid var(--line);
+  background: var(--gold);
+}
+
+.question-block h2 {
+  margin-bottom: 8px;
+  font-size: clamp(28px, 4.4vw, 52px);
+}
+
+.question-block p:last-child {
+  max-width: 820px;
+  margin-bottom: 0;
+  color: rgba(25, 24, 21, 0.72);
+  font-weight: 700;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.answer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 430px;
+  border: 2px solid var(--line);
+  background: var(--white);
+}
+
+.answer-card.correct {
+  background: #f1ffd3;
+}
+
+.answer-card.wrong {
+  background: #fff0ec;
+}
+
+.answer-body {
+  flex: 1;
+  padding: 18px;
+  border-bottom: 2px solid var(--line);
+}
+
+.answer-letter {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 14px;
+  border: 2px solid var(--line);
+  background: var(--cyan);
+  font-weight: 1000;
+}
+
+.answer-card p {
+  color: #2f2c25;
+  font-size: 16px;
+}
+
+.stamp-row {
+  display: grid;
+  gap: 0;
+}
+
+.stamp-button {
+  min-height: 46px;
+  border: 0;
+  border-top: 2px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 900;
+  text-align: left;
+  padding: 10px 14px;
+}
+
+.stamp-button:first-child {
+  border-top: 0;
+}
+
+.stamp-button:hover,
+.stamp-button.active {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.reveal {
+  padding: 14px 18px 18px;
+  border-top: 2px solid var(--line);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.reveal strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.reveal p {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.judge-bar,
+.share-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+}
+
+.judge-bar p,
+.share-panel p {
+  margin-bottom: 0;
+  color: rgba(255, 250, 240, 0.76);
+  font-weight: 700;
+}
+
+.share-panel h3 {
+  color: var(--white);
+}
+
+.result-hero {
+  padding: 26px;
+  border: 2px solid var(--line);
+  background: var(--cyan);
+}
+
+.result-hero p:last-child {
+  max-width: 780px;
+  margin-bottom: 0;
+  color: rgba(25, 24, 21, 0.72);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.metric-tile {
+  min-height: 146px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  background: var(--white);
+}
+
+.metric-tile span {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.metric-tile strong {
+  display: block;
+  font-size: clamp(30px, 6vw, 60px);
+  line-height: 0.95;
+}
+
+#shareCanvas {
+  display: block;
+  width: min(420px, 100%);
+  height: auto;
+  margin-top: 16px;
+  border: 2px solid var(--line);
+  background: var(--white);
+}
+
+.side-lab {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.lab-card,
+.api-card,
+.creator-lab {
+  padding: 22px;
+}
+
+.lab-card {
+  border-bottom: 2px solid var(--line);
+  background: var(--coral);
+}
+
+.lab-card .kicker,
+.lab-card p,
+.lab-card li {
+  color: rgba(25, 24, 21, 0.78);
+}
+
+.lab-card h2 {
+  font-size: 32px;
+}
+
+.lab-card ul {
+  padding-left: 18px;
+  margin-bottom: 0;
+}
+
+.api-card {
+  display: grid;
+  gap: 10px;
+  border-bottom: 2px solid var(--line);
+  background: var(--cyan);
+}
+
+.api-card h2 {
+  margin-bottom: 0;
+  font-size: 28px;
+}
+
+.api-card p {
+  margin-bottom: 0;
+  color: rgba(25, 24, 21, 0.76);
+  font-weight: 800;
+}
+
+.creator-lab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--white);
+}
+
+.creator-lab label {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.creator-lab textarea {
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+  border: 2px solid var(--line);
+  padding: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+}
+
+.creator-lab textarea:focus {
+  box-shadow: 0 0 0 4px var(--acid);
+}
+
+#creatorOutput {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.challenge-link {
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1120px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .stage {
+    min-height: auto;
+  }
+
+  .side-lab {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .lab-card,
+  .api-card {
+    border-right: 2px solid var(--line);
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .app-shell {
+    width: min(100vw - 20px, 760px);
+    margin: 10px auto;
+  }
+
+  .masthead {
+    display: grid;
+    padding: 22px 18px;
+  }
+
+  .intro,
+  .game,
+  .result {
+    padding: 18px;
+  }
+
+  .intro,
+  .answer-grid,
+  .result-grid,
+  .judge-bar,
+  .share-panel,
+  .side-lab {
+    grid-template-columns: 1fr;
+  }
+
+  .answer-card {
+    min-height: auto;
+  }
+
+  .lab-card {
+    border-right: 0;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .api-card {
+    border-right: 0;
+    border-bottom: 2px solid var(--line);
+  }
+}
+
+</style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="stage" aria-live="polite">
+        <div class="masthead">
+          <div>
+            <p class="eyebrow">知乎吹牛逼 · AI 脑洞实验室</p>
+            <h1>你能分清高赞、AI、纯吹吗？</h1>
+          </div>
+          <div class="score-pill" id="scorePill">0 / 0</div>
+        </div>
+
+        <section class="intro" id="introPanel">
+          <div class="intro-copy">
+            <p class="kicker">鉴定局开庭</p>
+            <h2>三段回答摆在你面前，只有一种是真的有东西。</h2>
+            <p>
+              每轮给你一个知乎式问题和三段回答。你要给每段盖章：
+              <strong>社区高赞风格</strong>、<strong>AI 仿深刻</strong>，或
+              <strong>纯吹牛逼</strong>。最后生成你的抗吹牛逼人格卡。
+            </p>
+          </div>
+          <div class="intro-actions">
+            <button class="primary-button" id="startBtn">开始鉴定</button>
+            <button class="ghost-button" id="hotBtn">今日热榜实验室</button>
+            <button class="ghost-button" id="demoBtn">直接看路演局</button>
+          </div>
+        </section>
+
+        <section class="game hidden" id="gamePanel">
+          <div class="round-meta">
+            <span id="roundLabel">第 1 局</span>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progressBar"></span>
+            </div>
+          </div>
+
+          <div class="question-block">
+            <p class="kicker">本局热议问题</p>
+            <h2 id="questionText"></h2>
+            <p id="questionHook"></p>
+          </div>
+
+          <div class="answer-grid" id="answerGrid"></div>
+
+          <div class="judge-bar">
+            <p id="roundHint">给三段回答分别盖章，全部完成后揭晓。</p>
+            <button class="primary-button" id="revealBtn" disabled>揭晓鉴定</button>
+          </div>
+        </section>
+
+        <section class="result hidden" id="resultPanel">
+          <div class="result-hero">
+            <p class="kicker">鉴定完成</p>
+            <h2 id="resultTitle"></h2>
+            <p id="resultCopy"></p>
+          </div>
+
+          <div class="result-grid">
+            <div class="metric-tile">
+              <span>抗吹牛逼指数</span>
+              <strong id="finalScore">0</strong>
+            </div>
+            <div class="metric-tile">
+              <span>识破回答</span>
+              <strong id="finalCorrect">0/15</strong>
+            </div>
+            <div class="metric-tile">
+              <span>最容易中招</span>
+              <strong id="finalWeakness">底层逻辑</strong>
+            </div>
+          </div>
+
+          <div class="share-panel">
+            <div>
+              <h3>把结果甩给朋友</h3>
+              <p id="shareText"></p>
+            </div>
+            <div class="share-actions">
+              <button class="primary-button" id="copyBtn">复制挑战文案</button>
+              <button class="ghost-button" id="restartBtn">再鉴定一次</button>
+            </div>
+          </div>
+
+          <canvas id="shareCanvas" width="1200" height="1600" aria-label="分享图"></canvas>
+        </section>
+      </section>
+
+      <aside class="side-lab">
+        <div class="lab-card">
+          <p class="kicker">玩法亮点</p>
+          <h2>不是测你是谁，是测你会被哪种“很懂”骗。</h2>
+          <ul>
+            <li>朋友互相挑战，天然有轻微胜负欲。</li>
+            <li>结果卡可截图，标签有冒犯感但不伤人。</li>
+            <li>每局揭晓“为什么像高赞”，可转成创作者灵感模板。</li>
+          </ul>
+        </div>
+
+        <div class="api-card">
+          <p class="kicker">知乎 API 接入位</p>
+          <h2>热榜题库可离线演示，也能接官方接口。</h2>
+          <p id="apiStatus">当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。</p>
+          <button class="ghost-button" id="pitchBtn">评委演示模式</button>
+        </div>
+
+        <form class="creator-lab" id="creatorForm">
+          <p class="kicker">临场造题</p>
+          <label for="topicInput">输入一个话题，生成一局朋友挑战题</label>
+          <textarea
+            id="topicInput"
+            rows="4"
+            placeholder="比如：年轻人为什么不爱结婚了？"
+          ></textarea>
+          <button class="ghost-button" type="submit">生成挑战局</button>
+          <p id="creatorOutput"></p>
+          <a class="challenge-link hidden" id="challengeLink" href="#">复制链接后可丢进群里挑战</a>
+        </form>
+      </aside>
+    </main>
+
+    <script>
+window.__HOT_ROUNDS__ = [
+  {
+    "question": "为什么 AI 写得越像人，越容易让人不信任？",
+    "hook": "这题适合路演：它正好解释我们为什么要做鉴定游戏。",
+    "answers": [
+      {
+        "kind": "human",
+        "lure": "信任机制",
+        "text": "AI 文本的问题不是不像人，而是太急着像一个“标准答案的人”。真实的人会犹豫、会暴露偏见、会留下没想透的地方。AI 一旦把所有边角都磨平，读者反而会觉得它没有来处。",
+        "reveal": "它解释的是信任来源：真实表达往往有边界和来处，而不是只有流畅。"
+      },
+      {
+        "kind": "ai",
+        "lure": "技术伦理",
+        "text": "这反映了人工智能时代信任范式的迁移。当生成式模型不断逼近人类表达，用户会在真实性感知与算法透明度之间产生认知张力。",
+        "reveal": "概念完整，但没有落到读者为什么会“不信任”的具体体验。"
+      },
+      {
+        "kind": "bluff",
+        "lure": "宏大词",
+        "text": "AI 越像人，人类越恐惧，是因为我们在机器身上看见了自身主体性的黄昏。这不是技术问题，而是文明镜像的坍塌。",
+        "reveal": "词很大，但把具体信任问题直接抬成文明危机，解释失焦。"
+      }
+    ]
+  },
+  {
+    "question": "为什么很多人收藏了一堆学习资料，却从来不看？",
+    "hook": "它表面是拖延，实际是自我安慰的设计问题。",
+    "answers": [
+      {
+        "kind": "ai",
+        "lure": "效率话术",
+        "text": "收藏资料是一种延迟满足的认知替代行为。用户通过占有信息获得短期掌控感，却没有完成知识内化所需的持续投入。",
+        "reveal": "判断大体正确，但像总结句，少了让人一眼代入的场景。"
+      },
+      {
+        "kind": "human",
+        "lure": "行为机制",
+        "text": "因为收藏的那一刻，人完成的不是学习，而是“以后会变好”的想象。资料越多，这个想象越具体，人就越容易误以为自己已经往前走了一步。",
+        "reveal": "它抓住了收藏动作的心理回报：不是知识，而是未来自我的安慰。"
+      },
+      {
+        "kind": "bluff",
+        "lure": "反常识",
+        "text": "真正高手收藏资料从来不是为了看，而是为了建立自己的信息风水。资料放在那里，知识磁场就会慢慢改变人。",
+        "reveal": "它把懒得看包装成玄学优势，属于好笑但无效的纯吹。"
+      }
+    ]
+  },
+  {
+    "question": "为什么大家越来越反感“你要提供情绪价值”？",
+    "hook": "这局容易被关系学术语骗。",
+    "answers": [
+      {
+        "kind": "human",
+        "lure": "关系边界",
+        "text": "问题不在情绪价值，而在“提供”这个词。它把关系里的自然回应，说成了一种可考核的服务。人当然需要被理解，但没人想在亲密关系里变成客服。",
+        "reveal": "它拆出了关键词的刺痛点：关系被服务化、绩效化。"
+      },
+      {
+        "kind": "bluff",
+        "lure": "人生哲理",
+        "text": "真正成熟的人不会索取情绪价值，因为高手早就实现了情绪自洽。还需要别人哄的人，本质上都没有完成精神断奶。",
+        "reveal": "把需求污名化，听起来强，其实是在回避关系里的互相支持。"
+      },
+      {
+        "kind": "ai",
+        "lure": "心理学术语",
+        "text": "情绪价值争议体现了亲密关系中的情感劳动分配问题。当个体对情绪支持的需求被工具化表达，就会引发关系主体性的反弹。",
+        "reveal": "概念正确但距离感强，像把热搜翻译成论文摘要。"
+      }
+    ]
+  }
+];
+const LABELS = [
+  { key: "human", name: "社区高赞风格", short: "高赞" },
+  { key: "ai", name: "AI 仿深刻", short: "AI" },
+  { key: "bluff", name: "纯吹牛逼", short: "纯吹" },
+];
+
+const BASE_ROUNDS = [
+  {
+    question: "为什么很多人越努力，反而越焦虑？",
+    hook: "这题最容易把人骗进“结构性分析”的坑里。",
+    answers: [
+      {
+        kind: "human",
+        lure: "结构分析",
+        text: "努力本身不会制造焦虑，失控感才会。一个人如果能清楚地知道努力和反馈之间的关系，即使辛苦，也会觉得自己在推进。真正让人崩溃的是：你每天都很用力，但不知道这个用力会不会被系统承认。",
+        reveal: "这段有清晰因果：把“努力”拆成“努力-反馈-失控感”，没有急着升华。",
+      },
+      {
+        kind: "ai",
+        lure: "三层结构",
+        text: "这个问题要分三层看：表层是时间管理，中层是资源错配，底层是时代不确定性。当个体努力无法穿透系统噪声，焦虑就成为现代性对人的一种精神征税。",
+        reveal: "词很满，框架很顺，但每层都没有证据落点，是典型“仿深刻”。",
+      },
+      {
+        kind: "bluff",
+        lure: "宏大词",
+        text: "努力的人焦虑，是因为他们已经觉醒了宇宙的熵增规律。人在对抗热寂，工作在对抗虚无，所以越努力越接近真相，越接近真相越痛苦。",
+        reveal: "把物理词硬接人生，听起来大，实际没有解释任何事。",
+      },
+    ],
+  },
+  {
+    question: "年轻人为什么越来越不爱发朋友圈了？",
+    hook: "别急着讲代际，先看它是不是在偷换概念。",
+    answers: [
+      {
+        kind: "ai",
+        lure: "代际叙事",
+        text: "朋友圈的衰落，本质上是熟人社会的公共舞台被算法时代的私域表达替代。年轻人不是不表达，而是把表达迁移到了更低风险、更可控的场域。",
+        reveal: "判断方向像真的，但全是概念堆叠，没有说明“低风险场域”到底是什么。",
+      },
+      {
+        kind: "human",
+        lure: "生活观察",
+        text: "因为朋友圈不是一个发布工具，而是一个关系现场。你发一张照片，看到的是生活；同事看到的是你没加班；亲戚看到的是你乱花钱；前任看到的是你过得怎么样。它太挤了。",
+        reveal: "这段抓住了朋友圈的真实压力：同一条内容被不同关系同时解读。",
+      },
+      {
+        kind: "bluff",
+        lure: "反常识",
+        text: "真正不发朋友圈的人，往往是精神资产最丰厚的人。因为他们已经不需要外部点赞给自己的存在背书，这是一种高维自洽。",
+        reveal: "把普通行为包装成优越感，典型“反常识式自嗨”。",
+      },
+    ],
+  },
+  {
+    question: "为什么很多人明明很累，却还是停不下来刷短视频？",
+    hook: "这局看谁能分清解释和责备。",
+    answers: [
+      {
+        kind: "bluff",
+        lure: "道德批判",
+        text: "刷短视频是现代人的精神降级。当一个人开始沉迷 15 秒刺激，就说明他的长期主义肌肉已经萎缩，人生正在被廉价快乐接管。",
+        reveal: "它只是把用户骂了一遍，没有解释疲惫状态下为什么会选择短刺激。",
+      },
+      {
+        kind: "human",
+        lure: "行为机制",
+        text: "累的时候人并不想快乐，人想要的是不用负责。短视频的诱惑在于，它不要求你做选择，不要求你社交，也不要求你证明自己有用。你只要躺着，它会替你把下一秒填满。",
+        reveal: "抓住了“低责任感”和“自动续杯”的行为机制，解释比评价更强。",
+      },
+      {
+        kind: "ai",
+        lure: "神经科学",
+        text: "从神经科学看，短视频通过即时反馈重塑多巴胺回路，使用户在疲劳状态下形成被动奖赏依赖。这不是懒惰，而是注意力资本主义的结果。",
+        reveal: "方向没错，但没有具体证据和场景，属于 AI 常见的术语正确。",
+      },
+    ],
+  },
+  {
+    question: "为什么现在很多人不愿意参加同学聚会？",
+    hook: "这题一不小心就会写成中年鸡汤。",
+    answers: [
+      {
+        kind: "human",
+        lure: "关系边界",
+        text: "不是大家突然冷漠了，而是同学关系很特殊：它保留了过去的亲密，却不包含现在的责任。很多聚会尴尬，是因为大家还在用 18 岁的称呼，互相打听 35 岁的人生。",
+        reveal: "这段把尴尬的来源说清楚了：旧关系模板匹配不了新生活差异。",
+      },
+      {
+        kind: "bluff",
+        lure: "人生哲理",
+        text: "不参加同学聚会的人，已经完成了从关系消费到自我内观的跃迁。真正成熟的人不需要回到过去确认自己赢没赢。",
+        reveal: "把“不去聚会”拔高成成熟，爽但虚。",
+      },
+      {
+        kind: "ai",
+        lure: "社会比较",
+        text: "同学聚会的退潮反映了社会比较机制的重构。个体在高流动社会中更倾向于规避身份暴露，以维护心理账户的稳定性。",
+        reveal: "几个概念像论文摘要，但缺少能让人代入的具体关系场景。",
+      },
+    ],
+  },
+  {
+    question: "AI 会不会让普通人更难找到工作？",
+    hook: "最会骗人的回答，往往听起来最“平衡”。",
+    answers: [
+      {
+        kind: "ai",
+        lure: "平衡话术",
+        text: "AI 不会替代人，而会替代不会使用 AI 的人。未来竞争的关键不再是单点技能，而是人机协同能力、跨域整合能力和持续学习能力的综合体现。",
+        reveal: "正确但太安全，像发布会金句。它回避了普通人如何被具体岗位挤压。",
+      },
+      {
+        kind: "bluff",
+        lure: "未来学",
+        text: "普通人找不到工作不是因为 AI，而是因为人类文明进入了后劳动时代。工作将变成少数人的表演，多数人的存在本身就是价值。",
+        reveal: "宏大到失重，既没有路径，也没有现实约束。",
+      },
+      {
+        kind: "human",
+        lure: "岗位拆解",
+        text: "问题不是 AI 会不会抢工作，而是它先抢哪一段工作。很多岗位不是整个消失，而是把初级环节压薄：整理资料、写初稿、做表格、出方案。新人最缺的正是这些练手机会。",
+        reveal: "把“失业”拆到岗位环节，指出新人训练路径被压缩，这是可讨论的洞察。",
+      },
+    ],
+  },
+];
+
+let rounds = [...BASE_ROUNDS];
+let current = 0;
+let guesses = {};
+let revealed = false;
+let correct = 0;
+let totalAnswered = 0;
+let lures = {};
+let challengeUrl = location.href.split("?")[0];
+
+const $ = (selector) => document.querySelector(selector);
+const answerGrid = $("#answerGrid");
+const introPanel = $("#introPanel");
+const gamePanel = $("#gamePanel");
+const resultPanel = $("#resultPanel");
+
+function shuffle(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+async function loadHotRounds() {
+  $("#apiStatus").textContent = "正在读取热榜挑战题库...";
+  try {
+    const hotRounds = window.__HOT_ROUNDS__ || [];
+    $("#apiStatus").textContent =
+      "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
+    return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
+  } catch {
+    $("#apiStatus").textContent =
+      "热榜接口暂不可用，已自动降级到本地题库，路演不会断。";
+    return BASE_ROUNDS;
+  }
+}
+
+async function startGame(mode = "shuffle") {
+  challengeUrl = location.href.split("?")[0];
+  if (mode === "hot") {
+    rounds = await loadHotRounds();
+  } else {
+    rounds = mode === "demo" ? [...BASE_ROUNDS] : shuffle(BASE_ROUNDS);
+    $("#apiStatus").textContent = "当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。";
+  }
+  current = 0;
+  guesses = {};
+  revealed = false;
+  correct = 0;
+  totalAnswered = 0;
+  lures = {};
+  introPanel.classList.add("hidden");
+  resultPanel.classList.add("hidden");
+  gamePanel.classList.remove("hidden");
+  renderRound();
+}
+
+function resetScore() {
+  current = 0;
+  correct = 0;
+  totalAnswered = 0;
+  lures = {};
+  guesses = {};
+  revealed = false;
+}
+
+function renderRound() {
+  const round = rounds[current];
+  guesses = {};
+  revealed = false;
+  $("#roundLabel").textContent = `第 ${current + 1} 局`;
+  $("#progressBar").style.width = `${(current / rounds.length) * 100}%`;
+  $("#questionText").textContent = round.question;
+  $("#questionHook").textContent = round.hook;
+  $("#roundHint").textContent = "给三段回答分别盖章，全部完成后揭晓。";
+  $("#revealBtn").disabled = true;
+  $("#revealBtn").textContent = "揭晓鉴定";
+  $("#scorePill").textContent = `${correct} / ${totalAnswered}`;
+
+  answerGrid.innerHTML = "";
+  shuffle(round.answers).forEach((answer, index) => {
+    const card = document.createElement("article");
+    card.className = "answer-card";
+    card.dataset.kind = answer.kind;
+    card.dataset.lure = answer.lure;
+    card.innerHTML = `
+      <div class="answer-body">
+        <span class="answer-letter">${String.fromCharCode(65 + index)}</span>
+        <p>${answer.text}</p>
+      </div>
+      <div class="stamp-row">
+        ${LABELS.map(
+          (label) =>
+            `<button class="stamp-button" data-label="${label.key}" type="button">${label.name}</button>`
+        ).join("")}
+      </div>
+    `;
+    card.querySelectorAll(".stamp-button").forEach((button) => {
+      button.addEventListener("click", () => selectLabel(card, button.dataset.label));
+    });
+    answerGrid.appendChild(card);
+  });
+}
+
+function selectLabel(card, label) {
+  if (revealed) return;
+  const cards = [...answerGrid.querySelectorAll(".answer-card")];
+  const index = cards.indexOf(card);
+  guesses[index] = label;
+  card.querySelectorAll(".stamp-button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.label === label);
+  });
+  $("#revealBtn").disabled = Object.keys(guesses).length !== 3;
+}
+
+function revealRound() {
+  if (revealed) {
+    if (current < rounds.length - 1) {
+      current += 1;
+      renderRound();
+    } else {
+      renderResult();
+    }
+    return;
+  }
+
+  revealed = true;
+  let roundCorrect = 0;
+  const cards = [...answerGrid.querySelectorAll(".answer-card")];
+  cards.forEach((card, index) => {
+    const actual = card.dataset.kind;
+    const guessed = guesses[index];
+    const answer = rounds[current].answers.find(
+      (item) => item.kind === actual && item.text === card.querySelector(".answer-body p").textContent
+    );
+    totalAnswered += 1;
+    if (actual === guessed) {
+      correct += 1;
+      roundCorrect += 1;
+      card.classList.add("correct");
+    } else {
+      card.classList.add("wrong");
+      const lure = card.dataset.lure;
+      lures[lure] = (lures[lure] || 0) + 1;
+    }
+
+    const reveal = document.createElement("div");
+    reveal.className = "reveal";
+    reveal.innerHTML = `
+      <strong>真身：${LABELS.find((label) => label.key === actual).name}</strong>
+      <p>${answer.reveal}</p>
+    `;
+    card.appendChild(reveal);
+    card.querySelectorAll(".stamp-button").forEach((button) => {
+      button.disabled = true;
+    });
+  });
+
+  $("#roundHint").textContent = `本局识破 ${roundCorrect}/3。${
+    roundCorrect === 3 ? "有点东西，继续。" : "刚才那一下很像真的，对吧？"
+  }`;
+  $("#revealBtn").textContent = current < rounds.length - 1 ? "下一局" : "查看人格卡";
+  $("#scorePill").textContent = `${correct} / ${totalAnswered}`;
+}
+
+function getPersona(index) {
+  if (index >= 86) {
+    return {
+      title: "冷面鉴定官",
+      copy: "你对“底层逻辑”“长期主义”“系统性变量”都有抗体。别人刚开始升华，你已经在找证据在哪。",
+    };
+  }
+  if (index >= 66) {
+    return {
+      title: "半信半疑型聪明人",
+      copy: "你能识别大部分废话，但偶尔会被漂亮结构带走。尤其是三段论一出现，你的大脑会自动给它加滤镜。",
+    };
+  }
+  if (index >= 46) {
+    return {
+      title: "高赞受害者",
+      copy: "只要一段话开头说“这个问题要分三层看”，你就已经准备点赞。别慌，这也是中文互联网老毛病。",
+    };
+  }
+  return {
+    title: "底层逻辑易感人群",
+    copy: "你不是好骗，你只是太尊重排版整齐的废话。建议看到宏大词先深呼吸三秒。",
+  };
+}
+
+function renderResult() {
+  gamePanel.classList.add("hidden");
+  resultPanel.classList.remove("hidden");
+  $("#progressBar").style.width = "100%";
+  const index = Math.round((correct / (rounds.length * 3)) * 100);
+  const persona = getPersona(index);
+  const weakness = Object.entries(lures).sort((a, b) => b[1] - a[1])[0]?.[0] || "漂亮结构";
+  const text = `我在「知乎吹牛逼鉴定局」拿到 ${index} 分，身份是「${persona.title}」。我最容易被「${weakness}」骗，你来试试能不能分清高赞、AI 和纯吹：`;
+
+  $("#resultTitle").textContent = persona.title;
+  $("#resultCopy").textContent = persona.copy;
+  $("#finalScore").textContent = index;
+  $("#finalCorrect").textContent = `${correct}/${rounds.length * 3}`;
+  $("#finalWeakness").textContent = weakness;
+  $("#shareText").textContent = text;
+  $("#scorePill").textContent = `${correct} / ${rounds.length * 3}`;
+  drawShareCard(index, persona.title, weakness, correct);
+}
+
+function drawShareCard(index, title, weakness, correctCount) {
+  const canvas = $("#shareCanvas");
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#f6f0e3";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#191815";
+  ctx.fillRect(70, 70, 1060, 1460);
+  ctx.fillStyle = "#c8ff3d";
+  ctx.fillRect(110, 110, 980, 210);
+  ctx.fillStyle = "#191815";
+  ctx.font = "900 58px sans-serif";
+  ctx.fillText("知乎吹牛逼鉴定局", 150, 205);
+  ctx.font = "800 34px sans-serif";
+  ctx.fillText("你能分清高赞、AI、纯吹吗？", 150, 265);
+
+  ctx.fillStyle = "#fffaf0";
+  ctx.font = "900 86px sans-serif";
+  wrapText(ctx, title, 130, 470, 940, 94);
+
+  ctx.fillStyle = "#55d9ff";
+  ctx.fillRect(130, 710, 420, 260);
+  ctx.fillStyle = "#ff674d";
+  ctx.fillRect(650, 710, 420, 260);
+  ctx.fillStyle = "#191815";
+  ctx.font = "900 132px sans-serif";
+  ctx.fillText(String(index), 175, 875);
+  ctx.font = "900 34px sans-serif";
+  ctx.fillText("抗吹牛逼指数", 178, 930);
+  ctx.font = "900 60px sans-serif";
+  ctx.fillText(`${correctCount}/15`, 700, 850);
+  ctx.font = "900 34px sans-serif";
+  ctx.fillText("识破回答", 704, 930);
+
+  ctx.fillStyle = "#fffaf0";
+  ctx.font = "800 44px sans-serif";
+  ctx.fillText("最容易中招", 130, 1120);
+  ctx.fillStyle = "#ffcc48";
+  ctx.font = "900 76px sans-serif";
+  wrapText(ctx, weakness, 130, 1215, 920, 82);
+  ctx.fillStyle = "#fffaf0";
+  ctx.font = "700 28px sans-serif";
+  wrapText(ctx, "截图发给朋友：看他是不是也会被一本正经的废话骗。", 130, 1410, 920, 42);
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  let line = "";
+  let top = y;
+  [...text].forEach((char) => {
+    const testLine = line + char;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      ctx.fillText(line, x, top);
+      line = char;
+      top += lineHeight;
+    } else {
+      line = testLine;
+    }
+  });
+  ctx.fillText(line, x, top);
+}
+
+function createChallenge(topic) {
+  const clean = topic.trim().replace(/\s+/g, " ");
+  if (!clean) return;
+  const customRound = {
+    question: clean,
+    hook: "这是你刚生成的朋友挑战局，看看谁最容易被“很懂”骗。",
+    answers: [
+      {
+        kind: "human",
+        lure: "具体场景",
+        text: `讨论「${clean}」时，最重要的是先把问题落回具体场景。很多争论不是观点不同，而是大家默认的处境不同：谁承担成本，谁得到好处，谁拥有选择权。`,
+        reveal: "有场景、有变量、有可讨论的分歧点，像一段可继续展开的回答。",
+      },
+      {
+        kind: "ai",
+        lure: "三层结构",
+        text: `「${clean}」要分三层看：表层是个体选择，中层是社会结构，底层是时代情绪。当三者发生耦合，就会形成一种集体性的认知偏移。`,
+        reveal: "框架完整但过于万能，换任何题也能套。",
+      },
+      {
+        kind: "bluff",
+        lure: "宏大词",
+        text: `真正理解「${clean}」的人，会发现这已经不是一个问题，而是文明转向的信号。所有具体争论，都只是冰山露出水面的 3%。`,
+        reveal: "直接跳到文明转向，没有证据，属于气势型纯吹。",
+      },
+    ],
+  };
+  rounds = [customRound, ...BASE_ROUNDS.slice(0, 4)];
+  resetScore();
+  challengeUrl = `${location.href.split("?")[0]}?topic=${encodeURIComponent(clean)}`;
+  introPanel.classList.add("hidden");
+  resultPanel.classList.add("hidden");
+  gamePanel.classList.remove("hidden");
+  renderRound();
+  $("#creatorOutput").textContent = "已生成挑战局，第一题就是你的话题。链接里带题目，可丢给朋友。";
+  $("#challengeLink").href = challengeUrl;
+  $("#challengeLink").classList.remove("hidden");
+  $("#challengeLink").textContent = "打开这条挑战链接";
+}
+
+function pitchMode() {
+  rounds = [
+    {
+      question: "评委现场盲测：这三段里，哪段最像真洞察？",
+      hook: "路演专用局：先让评委参与，再解释产品价值。",
+      answers: [
+        {
+          kind: "human",
+          lure: "产品洞察",
+          text: "这个产品好玩的地方不是让 AI 写得更像人，而是让用户亲手发现：一段话看起来很聪明，和它真的有洞察，中间隔着证据、场景和可反驳性。",
+          reveal: "它直接说明产品判断标准：证据、场景、可反驳性。"
+        },
+        {
+          kind: "ai",
+          lure: "赛道话术",
+          text: "本项目通过游戏化机制重构知识社区内容消费链路，以互动鉴别驱动用户心智升级，并形成从娱乐传播到创作者生产力的闭环。",
+          reveal: "路演味很浓，但每个词都偏抽象，是 AI 式项目包装。"
+        },
+        {
+          kind: "bluff",
+          lure: "宏大叙事",
+          text: "我们不是在做一个网页，而是在重新定义 AI 时代人类对真理的最后防线。每一次点击，都是文明对幻觉的反击。",
+          reveal: "很好笑，也很热血，但除了气势没有解释产品。"
+        }
+      ]
+    },
+    ...BASE_ROUNDS.slice(0, 4)
+  ];
+  resetScore();
+  introPanel.classList.add("hidden");
+  resultPanel.classList.add("hidden");
+  gamePanel.classList.remove("hidden");
+  $("#apiStatus").textContent = "评委演示模式已开启：第一局用于路演互动破冰。";
+  renderRound();
+}
+
+$("#startBtn").addEventListener("click", () => startGame("shuffle"));
+$("#hotBtn").addEventListener("click", () => startGame("hot"));
+$("#demoBtn").addEventListener("click", () => startGame("demo"));
+$("#pitchBtn").addEventListener("click", pitchMode);
+$("#revealBtn").addEventListener("click", revealRound);
+$("#restartBtn").addEventListener("click", () => startGame("shuffle"));
+$("#copyBtn").addEventListener("click", async () => {
+  const share = `${$("#shareText").textContent} ${challengeUrl}`;
+  try {
+    await navigator.clipboard.writeText(share);
+    $("#copyBtn").textContent = "已复制";
+    setTimeout(() => {
+      $("#copyBtn").textContent = "复制挑战文案";
+    }, 1400);
+  } catch {
+    $("#shareText").textContent = share;
+  }
+});
+$("#creatorForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  createChallenge($("#topicInput").value);
+});
+
+const sharedTopic = new URLSearchParams(location.search).get("topic");
+if (sharedTopic) {
+  $("#topicInput").value = sharedTopic;
+  createChallenge(sharedTopic);
+}
+
+</script>
+  </body>
+</html>

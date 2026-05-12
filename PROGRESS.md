@@ -61,3 +61,30 @@
 - 继续尝试官方文档/API 读取
 - 若拿不到 API，先把实时接口做成可配置代理结构
 - 争取完成 GitHub 远程仓库创建与 Pages 部署
+
+## 2026-05-12 13:20 America/Los_Angeles
+
+已完成：
+
+- 生成 `dist/index.html` 单文件部署包，内联 CSS、JS、热榜实验题库和 favicon
+- 单文件包通过本地 HTTP 检查，可作为 GitHub Pages/Vercel/Netlify 的最小发布产物
+- 尝试通过 GitHub 连接器写入 `NewRudy/notebook/zhihu-chuiniubi-judge/index.html`
+- 下载 GitHub CLI `gh` 到本地 `tools/`，版本为 2.92.0，可用于后续登录和建仓
+
+验证：
+
+- `dist/index.html` 可本地访问
+- `?topic=` 分享链接在单文件包中仍可用
+- `gh --version` 通过
+
+阻塞：
+
+- GitHub 连接器对 `NewRudy/notebook` 写入返回 403：`Resource not accessible by integration`
+- `gh` 已可运行，但仍需要 GitHub 登录凭据才能创建仓库和 push
+- GitHub Pages 公开 URL 探测遇到连接 reset，暂不能确认已有 Pages 子目录发布状态
+
+下一步：
+
+- 尝试 `gh auth login` 或找到可用 GitHub 凭据
+- 如果获得 GitHub 权限，优先创建 `NewRudy/zhihu-chuiniubi-judge` 并推送完整仓库
+- 若仍无权限，准备一键发布说明和单文件部署包，让用户可最快完成授权发布
