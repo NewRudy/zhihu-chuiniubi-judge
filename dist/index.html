@@ -388,6 +388,45 @@ strong {
   margin: 16px 0;
 }
 
+.creator-insight {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.creator-insight > div,
+.script-box {
+  min-height: 170px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  background: var(--white);
+}
+
+.creator-insight > div:first-child {
+  background: var(--gold);
+}
+
+.creator-insight h3 {
+  margin-bottom: 10px;
+  font-size: 26px;
+  line-height: 1.08;
+}
+
+.creator-insight p {
+  margin-bottom: 0;
+  color: rgba(25, 24, 21, 0.74);
+  font-weight: 800;
+}
+
+.script-box span {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--coral);
+  font-size: 13px;
+  font-weight: 1000;
+}
+
 .metric-tile {
   min-height: 146px;
   padding: 18px;
@@ -551,6 +590,7 @@ strong {
   .intro,
   .answer-grid,
   .result-grid,
+  .creator-insight,
   .judge-bar,
   .share-panel,
   .side-lab {
@@ -643,6 +683,22 @@ strong {
             <div class="metric-tile">
               <span>最容易中招</span>
               <strong id="finalWeakness">底层逻辑</strong>
+            </div>
+          </div>
+
+          <div class="creator-insight">
+            <div>
+              <p class="kicker">创作者灵感转化</p>
+              <h3 id="creatorTitle">把鉴定结果变成一篇能发的回答</h3>
+              <p id="creatorAngle"></p>
+            </div>
+            <div class="script-box">
+              <span>高赞开头</span>
+              <p id="creatorOpening"></p>
+            </div>
+            <div class="script-box">
+              <span>评论区钩子</span>
+              <p id="creatorHook"></p>
             </div>
           </div>
 
@@ -1100,7 +1156,43 @@ function renderResult() {
   $("#finalWeakness").textContent = weakness;
   $("#shareText").textContent = text;
   $("#scorePill").textContent = `${correct} / ${rounds.length * 3}`;
+  renderCreatorInsight(index, persona.title, weakness);
   drawShareCard(index, persona.title, weakness, correct);
+}
+
+function renderCreatorInsight(index, title, weakness) {
+  const insightMap = {
+    三层结构: {
+      angle: "你的创作机会不是继续堆框架，而是把每一层都落到一个可验证的生活场景。",
+      opening: "这个问题不能只说“分三层看”。真正关键的是：哪一层正在具体改变普通人的选择？",
+      hook: "你最受不了哪种“看起来很有结构、其实没说人话”的回答？",
+    },
+    宏大词: {
+      angle: "把大词往下拽，拽到一个具体的人、一个具体损失、一个具体选择，内容就会站住。",
+      opening: "我不太想把这个问题直接上升到时代。先看一个更小的细节：它到底让谁多付了成本？",
+      hook: "你见过哪些一句话很燃、仔细想等于没说的表达？",
+    },
+    平衡话术: {
+      angle: "评委和读者都听腻了安全正确，真正有传播力的是指出被平衡话术遮住的代价。",
+      opening: "“不会替代人，只会替代不会用工具的人”这句话太顺了，顺到它掩盖了一个更现实的问题。",
+      hook: "你觉得最像正确废话的一句 AI 时代金句是什么？",
+    },
+    技术伦理: {
+      angle: "不要只讲伦理，要讲用户在什么瞬间开始不信任、为什么不信任、怎么重新建立信任。",
+      opening: "AI 让人不安的地方，往往不是它犯错，而是它把错误说得太完整。",
+      hook: "你什么时候会突然意识到：这段话八成是 AI 写的？",
+    },
+  };
+  const fallback = {
+    angle: `你的「${title}」结果可以反向变成选题：拆掉「${weakness}」这种话术，教读者识别真洞察和假深刻。`,
+    opening: `判断一段回答有没有价值，不是看它用了多少高级词，而是看它有没有解释一个真实处境。`,
+    hook: "你最容易被哪种一本正经的表达骗到？",
+  };
+  const insight = insightMap[weakness] || fallback;
+  $("#creatorTitle").textContent = index >= 66 ? "你可以写一篇反吹牛逼指南" : "你可以写一篇自救型选题";
+  $("#creatorAngle").textContent = insight.angle;
+  $("#creatorOpening").textContent = insight.opening;
+  $("#creatorHook").textContent = insight.hook;
 }
 
 function drawShareCard(index, title, weakness, correctCount) {

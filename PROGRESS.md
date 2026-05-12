@@ -88,3 +88,31 @@
 - 尝试 `gh auth login` 或找到可用 GitHub 凭据
 - 如果获得 GitHub 权限，优先创建 `NewRudy/zhihu-chuiniubi-judge` 并推送完整仓库
 - 若仍无权限，准备一键发布说明和单文件部署包，让用户可最快完成授权发布
+
+## 2026-05-12 14:20 America/Los_Angeles
+
+已完成：
+
+- 结果页新增「创作者灵感转化」模块
+- 根据用户最容易中招的话术输出可写角度、高赞开头、评论区钩子
+- 新增 `scripts/build-dist.py`，自动生成单文件部署包
+- 重新构建 `dist/index.html`
+- 更新提交说明和路线图
+
+验证：
+
+- `node --check script.js` 通过
+- `python3 scripts/build-dist.py` 可重建部署包
+- 本地 HTTP 可访问源码版、单文件版和带 `?topic=` 的挑战链接
+
+阻塞：
+
+- `gh` 仍未登录
+- 飞书 API 文档正文仍未读取到
+- 线上发布仍等待 GitHub 授权或其他可写部署凭据
+
+下一步：
+
+- 继续尝试拿到 GitHub 授权或可写部署目标
+- 若授权到位，立即执行 `bash scripts/publish-github.sh`
+- 若 API 文档到位，将「今日热榜实验室」替换为真实接口/代理结构
