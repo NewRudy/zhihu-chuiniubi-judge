@@ -20,10 +20,12 @@ js = (
     + hot
     + ";\n"
     + js.replace(
-        'const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });\n'
+        'const response = await fetch("./api/challenges", { cache: "no-store" });\n'
         "    if (!response.ok) throw new Error(`HTTP ${response.status}`);\n"
-        "    const hotRounds = await response.json();",
-        "const hotRounds = window.__HOT_ROUNDS__ || [];",
+        "    const payload = await response.json();\n"
+        "    const hotRounds = payload.rounds || [];",
+        'const payload = { source: "fallback", rounds: window.__HOT_ROUNDS__ || [] };\n'
+        "    const hotRounds = payload.rounds || [];",
     )
 )
 html = html.replace('<script src="./script.js"></script>', f"<script>\n{js}\n</script>")

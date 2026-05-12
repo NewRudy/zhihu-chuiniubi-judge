@@ -145,3 +145,30 @@
 - 生成本地提交 zip
 - 继续寻找可用部署授权
 - 授权到位后立即发布 GitHub Pages 并把链接补入提交材料
+
+## 2026-05-12 16:20 America/Los_Angeles
+
+已完成：
+
+- 再次确认本地 Git 状态、`gh` 登录状态和提交包状态
+- 新增 `api/challenges.js` Serverless API 代理骨架
+- 新增 `vercel.json`
+- 新增 `API_INTEGRATION.md`
+- 前端「今日热榜实验室」改为优先请求 `/api/challenges`，失败后回退到本地 `data/hot-rounds.json`
+- 单文件构建脚本同步适配 API 代理逻辑
+
+验证：
+
+- `node --check script.js` 通过
+- 提交包可生成
+- 本地 fallback 逻辑仍保留
+
+阻塞：
+
+- GitHub CLI 仍未登录
+- 官方知乎 API 文档还未拿到真实 base URL、token 和响应结构
+
+下一步：
+
+- 验证 `api/challenges.js` 在本地 Node 环境下的 fallback 响应
+- 授权到位后优先使用 Vercel 或 GitHub Pages 发布；如果有 token，优先 Vercel

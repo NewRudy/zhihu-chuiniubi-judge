@@ -149,16 +149,28 @@ function shuffle(items) {
 async function loadHotRounds() {
   $("#apiStatus").textContent = "正在读取热榜挑战题库...";
   try {
-    const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });
+    const response = await fetch("./api/challenges", { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const hotRounds = await response.json();
+    const payload = await response.json();
+    const hotRounds = payload.rounds || [];
     $("#apiStatus").textContent =
-      "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
+      payload.source === "zhihu-api"
+        ? "已连接知乎 API，正在使用实时热榜挑战题库。"
+        : "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
     return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
   } catch {
-    $("#apiStatus").textContent =
-      "热榜接口暂不可用，已自动降级到本地题库，路演不会断。";
-    return BASE_ROUNDS;
+    try {
+      const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const hotRounds = await response.json();
+      $("#apiStatus").textContent =
+        "热榜代理暂不可用，已自动降级到本地题库，路演不会断。";
+      return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
+    } catch {
+      $("#apiStatus").textContent =
+        "热榜接口暂不可用，已自动降级到基础题库，路演不会断。";
+      return BASE_ROUNDS;
+    }
   }
 }
 

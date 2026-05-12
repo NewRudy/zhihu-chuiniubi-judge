@@ -29,6 +29,7 @@ python3 -m http.server 5173
 - `PITCH.md`：15 秒、90 秒和 3 分钟路演讲稿
 - `JUDGING.md`：评审要点说明
 - `PUBLISH.md`：GitHub Pages 发布说明
+- `API_INTEGRATION.md`：知乎 API 代理接入方案
 - `dist/index.html`：单文件部署包
 
 生成提交包：
