@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="知乎吹牛逼鉴定局：你能分清社区高赞、AI仿深刻和纯吹牛逼吗？"
+    />
+    <title>知乎吹牛逼鉴定局</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="stage" aria-live="polite">
+        <div class="masthead">
+          <div>
+            <p class="eyebrow">知乎吹牛逼 · AI 脑洞实验室</p>
+            <h1>你能分清高赞、AI、纯吹吗？</h1>
+          </div>
+          <div class="score-pill" id="scorePill">0 / 0</div>
+        </div>
+
+        <section class="intro" id="introPanel">
+          <div class="intro-copy">
+            <p class="kicker">鉴定局开庭</p>
+            <h2>三段回答摆在你面前，只有一种是真的有东西。</h2>
+            <p>
+              每轮给你一个知乎式问题和三段回答。你要给每段盖章：
+              <strong>社区高赞风格</strong>、<strong>AI 仿深刻</strong>，或
+              <strong>纯吹牛逼</strong>。最后生成你的抗吹牛逼人格卡。
+            </p>
+          </div>
+          <div class="intro-actions">
+            <button class="primary-button" id="startBtn">开始鉴定</button>
+            <button class="ghost-button" id="demoBtn">直接看路演局</button>
+          </div>
+        </section>
+
+        <section class="game hidden" id="gamePanel">
+          <div class="round-meta">
+            <span id="roundLabel">第 1 局</span>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progressBar"></span>
+            </div>
+          </div>
+
+          <div class="question-block">
+            <p class="kicker">本局热议问题</p>
+            <h2 id="questionText"></h2>
+            <p id="questionHook"></p>
+          </div>
+
+          <div class="answer-grid" id="answerGrid"></div>
+
+          <div class="judge-bar">
+            <p id="roundHint">给三段回答分别盖章，全部完成后揭晓。</p>
+            <button class="primary-button" id="revealBtn" disabled>揭晓鉴定</button>
+          </div>
+        </section>
+
+        <section class="result hidden" id="resultPanel">
+          <div class="result-hero">
+            <p class="kicker">鉴定完成</p>
+            <h2 id="resultTitle"></h2>
+            <p id="resultCopy"></p>
+          </div>
+
+          <div class="result-grid">
+            <div class="metric-tile">
+              <span>抗吹牛逼指数</span>
+              <strong id="finalScore">0</strong>
+            </div>
+            <div class="metric-tile">
+              <span>识破回答</span>
+              <strong id="finalCorrect">0/15</strong>
+            </div>
+            <div class="metric-tile">
+              <span>最容易中招</span>
+              <strong id="finalWeakness">底层逻辑</strong>
+            </div>
+          </div>
+
+          <div class="share-panel">
+            <div>
+              <h3>把结果甩给朋友</h3>
+              <p id="shareText"></p>
+            </div>
+            <div class="share-actions">
+              <button class="primary-button" id="copyBtn">复制挑战文案</button>
+              <button class="ghost-button" id="restartBtn">再鉴定一次</button>
+            </div>
+          </div>
+
+          <canvas id="shareCanvas" width="1200" height="1600" aria-label="分享图"></canvas>
+        </section>
+      </section>
+
+      <aside class="side-lab">
+        <div class="lab-card">
+          <p class="kicker">玩法亮点</p>
+          <h2>不是测你是谁，是测你会被哪种“很懂”骗。</h2>
+          <ul>
+            <li>朋友互相挑战，天然有轻微胜负欲。</li>
+            <li>结果卡可截图，标签有冒犯感但不伤人。</li>
+            <li>每局揭晓“为什么像高赞”，可转成创作者灵感模板。</li>
+          </ul>
+        </div>
+
+        <form class="creator-lab" id="creatorForm">
+          <p class="kicker">临场造题</p>
+          <label for="topicInput">输入一个话题，生成一局朋友挑战题</label>
+          <textarea
+            id="topicInput"
+            rows="4"
+            placeholder="比如：年轻人为什么不爱结婚了？"
+          ></textarea>
+          <button class="ghost-button" type="submit">生成挑战局</button>
+          <p id="creatorOutput"></p>
+        </form>
+      </aside>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
