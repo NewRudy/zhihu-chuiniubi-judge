@@ -116,3 +116,32 @@
 - 继续尝试拿到 GitHub 授权或可写部署目标
 - 若授权到位，立即执行 `bash scripts/publish-github.sh`
 - 若 API 文档到位，将「今日热榜实验室」替换为真实接口/代理结构
+
+## 2026-05-12 15:20 America/Los_Angeles
+
+已完成：
+
+- 确认本地 Git、代码检查和单文件部署包状态正常
+- 确认 `gh` 仍未登录
+- 确认 GitHub App 当前没有可写安装仓库，无法通过连接器发布
+- 新增 `PITCH.md` 路演讲稿
+- 新增 `JUDGING.md` 评审要点说明
+- 新增 `scripts/package-submission.sh` 提交包打包脚本
+- 更新 `README.md` 的路演与提交材料说明
+
+验证：
+
+- `node --check script.js` 通过
+- `data/hot-rounds.json` 解析通过
+- `dist/index.html` 可重建
+
+阻塞：
+
+- 线上发布仍等待 GitHub CLI 登录或其他部署凭据
+- 官方飞书 API 文档仍不可读
+
+下一步：
+
+- 生成本地提交 zip
+- 继续寻找可用部署授权
+- 授权到位后立即发布 GitHub Pages 并把链接补入提交材料

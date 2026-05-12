@@ -22,3 +22,17 @@ python3 -m http.server 5173
 ## 部署
 
 这是一个纯静态站点，可以直接部署到 GitHub Pages、Vercel 或 Netlify。
+
+## 路演与提交材料
+
+- `SUBMISSION.md`：黑客松提交说明
+- `PITCH.md`：15 秒、90 秒和 3 分钟路演讲稿
+- `JUDGING.md`：评审要点说明
+- `PUBLISH.md`：GitHub Pages 发布说明
+- `dist/index.html`：单文件部署包
+
+生成提交包：
+
+```bash
+bash scripts/package-submission.sh
+```
