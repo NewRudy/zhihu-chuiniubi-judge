@@ -407,10 +407,11 @@ strong {
 
 .side-lab {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
 }
 
 .lab-card,
+.api-card,
 .creator-lab {
   padding: 22px;
 }
@@ -433,6 +434,24 @@ strong {
 .lab-card ul {
   padding-left: 18px;
   margin-bottom: 0;
+}
+
+.api-card {
+  display: grid;
+  gap: 10px;
+  border-bottom: 2px solid var(--line);
+  background: var(--cyan);
+}
+
+.api-card h2 {
+  margin-bottom: 0;
+  font-size: 28px;
+}
+
+.api-card p {
+  margin-bottom: 0;
+  color: rgba(25, 24, 21, 0.76);
+  font-weight: 800;
 }
 
 .creator-lab {
@@ -468,6 +487,13 @@ strong {
   font-weight: 800;
 }
 
+.challenge-link {
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
 .hidden {
   display: none !important;
 }
@@ -482,11 +508,12 @@ strong {
   }
 
   .side-lab {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
   }
 
-  .lab-card {
+  .lab-card,
+  .api-card {
     border-right: 2px solid var(--line);
     border-bottom: 0;
   }
@@ -523,6 +550,11 @@ strong {
   }
 
   .lab-card {
+    border-right: 0;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .api-card {
     border-right: 0;
     border-bottom: 2px solid var(--line);
   }

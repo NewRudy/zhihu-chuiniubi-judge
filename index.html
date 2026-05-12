@@ -34,6 +34,7 @@
           </div>
           <div class="intro-actions">
             <button class="primary-button" id="startBtn">开始鉴定</button>
+            <button class="ghost-button" id="hotBtn">今日热榜实验室</button>
             <button class="ghost-button" id="demoBtn">直接看路演局</button>
           </div>
         </section>
@@ -108,6 +109,13 @@
           </ul>
         </div>
 
+        <div class="api-card">
+          <p class="kicker">知乎 API 接入位</p>
+          <h2>热榜题库可离线演示，也能接官方接口。</h2>
+          <p id="apiStatus">当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。</p>
+          <button class="ghost-button" id="pitchBtn">评委演示模式</button>
+        </div>
+
         <form class="creator-lab" id="creatorForm">
           <p class="kicker">临场造题</p>
           <label for="topicInput">输入一个话题，生成一局朋友挑战题</label>
@@ -118,6 +126,7 @@
           ></textarea>
           <button class="ghost-button" type="submit">生成挑战局</button>
           <p id="creatorOutput"></p>
+          <a class="challenge-link hidden" id="challengeLink" href="#">复制链接后可丢进群里挑战</a>
         </form>
       </aside>
     </main>

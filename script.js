@@ -134,6 +134,7 @@ let revealed = false;
 let correct = 0;
 let totalAnswered = 0;
 let lures = {};
+let challengeUrl = location.href.split("?")[0];
 
 const $ = (selector) => document.querySelector(selector);
 const answerGrid = $("#answerGrid");
@@ -145,8 +146,30 @@ function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-function startGame(useDemoOrder = false) {
-  rounds = useDemoOrder ? [...BASE_ROUNDS] : shuffle(BASE_ROUNDS);
+async function loadHotRounds() {
+  $("#apiStatus").textContent = "正在读取热榜挑战题库...";
+  try {
+    const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const hotRounds = await response.json();
+    $("#apiStatus").textContent =
+      "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
+    return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
+  } catch {
+    $("#apiStatus").textContent =
+      "热榜接口暂不可用，已自动降级到本地题库，路演不会断。";
+    return BASE_ROUNDS;
+  }
+}
+
+async function startGame(mode = "shuffle") {
+  challengeUrl = location.href.split("?")[0];
+  if (mode === "hot") {
+    rounds = await loadHotRounds();
+  } else {
+    rounds = mode === "demo" ? [...BASE_ROUNDS] : shuffle(BASE_ROUNDS);
+    $("#apiStatus").textContent = "当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。";
+  }
   current = 0;
   guesses = {};
   revealed = false;
@@ -157,6 +180,15 @@ function startGame(useDemoOrder = false) {
   resultPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
   renderRound();
+}
+
+function resetScore() {
+  current = 0;
+  correct = 0;
+  totalAnswered = 0;
+  lures = {};
+  guesses = {};
+  revealed = false;
 }
 
 function renderRound() {
@@ -390,23 +422,62 @@ function createChallenge(topic) {
     ],
   };
   rounds = [customRound, ...BASE_ROUNDS.slice(0, 4)];
-  current = 0;
-  correct = 0;
-  totalAnswered = 0;
-  lures = {};
+  resetScore();
+  challengeUrl = `${location.href.split("?")[0]}?topic=${encodeURIComponent(clean)}`;
   introPanel.classList.add("hidden");
   resultPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
   renderRound();
-  $("#creatorOutput").textContent = "已生成挑战局，第一题就是你的话题。";
+  $("#creatorOutput").textContent = "已生成挑战局，第一题就是你的话题。链接里带题目，可丢给朋友。";
+  $("#challengeLink").href = challengeUrl;
+  $("#challengeLink").classList.remove("hidden");
+  $("#challengeLink").textContent = "打开这条挑战链接";
 }
 
-$("#startBtn").addEventListener("click", () => startGame(false));
-$("#demoBtn").addEventListener("click", () => startGame(true));
+function pitchMode() {
+  rounds = [
+    {
+      question: "评委现场盲测：这三段里，哪段最像真洞察？",
+      hook: "路演专用局：先让评委参与，再解释产品价值。",
+      answers: [
+        {
+          kind: "human",
+          lure: "产品洞察",
+          text: "这个产品好玩的地方不是让 AI 写得更像人，而是让用户亲手发现：一段话看起来很聪明，和它真的有洞察，中间隔着证据、场景和可反驳性。",
+          reveal: "它直接说明产品判断标准：证据、场景、可反驳性。"
+        },
+        {
+          kind: "ai",
+          lure: "赛道话术",
+          text: "本项目通过游戏化机制重构知识社区内容消费链路，以互动鉴别驱动用户心智升级，并形成从娱乐传播到创作者生产力的闭环。",
+          reveal: "路演味很浓，但每个词都偏抽象，是 AI 式项目包装。"
+        },
+        {
+          kind: "bluff",
+          lure: "宏大叙事",
+          text: "我们不是在做一个网页，而是在重新定义 AI 时代人类对真理的最后防线。每一次点击，都是文明对幻觉的反击。",
+          reveal: "很好笑，也很热血，但除了气势没有解释产品。"
+        }
+      ]
+    },
+    ...BASE_ROUNDS.slice(0, 4)
+  ];
+  resetScore();
+  introPanel.classList.add("hidden");
+  resultPanel.classList.add("hidden");
+  gamePanel.classList.remove("hidden");
+  $("#apiStatus").textContent = "评委演示模式已开启：第一局用于路演互动破冰。";
+  renderRound();
+}
+
+$("#startBtn").addEventListener("click", () => startGame("shuffle"));
+$("#hotBtn").addEventListener("click", () => startGame("hot"));
+$("#demoBtn").addEventListener("click", () => startGame("demo"));
+$("#pitchBtn").addEventListener("click", pitchMode);
 $("#revealBtn").addEventListener("click", revealRound);
-$("#restartBtn").addEventListener("click", () => startGame(false));
+$("#restartBtn").addEventListener("click", () => startGame("shuffle"));
 $("#copyBtn").addEventListener("click", async () => {
-  const share = `${$("#shareText").textContent} ${location.href}`;
+  const share = `${$("#shareText").textContent} ${challengeUrl}`;
   try {
     await navigator.clipboard.writeText(share);
     $("#copyBtn").textContent = "已复制";
@@ -421,3 +492,9 @@ $("#creatorForm").addEventListener("submit", (event) => {
   event.preventDefault();
   createChallenge($("#topicInput").value);
 });
+
+const sharedTopic = new URLSearchParams(location.search).get("topic");
+if (sharedTopic) {
+  $("#topicInput").value = sharedTopic;
+  createChallenge(sharedTopic);
+}
