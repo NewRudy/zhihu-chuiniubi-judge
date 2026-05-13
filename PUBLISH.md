@@ -28,6 +28,14 @@ GH_TOKEN=你的临时token bash scripts/publish-with-token.sh
 这个脚本不会把 token 写入 `origin`，只会在本次 `git push` 使用临时
 HTTP header。推送完成后可以立刻到 GitHub 设置页撤销该 token。
 
+如果不想把 token 粘进命令历史，可以先复制 token，然后运行：
+
+```bash
+bash scripts/publish-from-clipboard.sh
+```
+
+脚本会从 macOS 剪贴板读取 token，并拒绝使用不像 GitHub token 的内容。
+
 预期产物：
 
 - 仓库：`https://github.com/NewRudy/zhihu-chuiniubi-judge`

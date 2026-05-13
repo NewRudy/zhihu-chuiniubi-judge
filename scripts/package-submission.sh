@@ -11,8 +11,10 @@ rm -f "$OUT"
 
 zip -q -r "$OUT" \
   index.html styles.css script.js favicon.svg data \
+  api vercel.json .github/workflows/pages.yml \
   dist/index.html \
-  README.md SUBMISSION.md ROADMAP.md API_NOTES.md PROGRESS.md PUBLISH.md PITCH.md JUDGING.md \
-  scripts/build-dist.py scripts/publish-github.sh
+  README.md SUBMISSION.md ROADMAP.md API_NOTES.md API_INTEGRATION.md PROGRESS.md PUBLISH.md PITCH.md JUDGING.md \
+  scripts/build-dist.py scripts/publish-github.sh scripts/publish-with-token.sh scripts/publish-from-clipboard.sh \
+  scripts/smoke-test.sh scripts/browser-ux-check.js
 
 echo "$OUT"

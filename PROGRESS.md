@@ -218,6 +218,33 @@
 
 - `NODE_PATH=... node scripts/browser-ux-check.js` 通过
 - `bash scripts/smoke-test.sh` 通过
+
+## 2026-05-12 22:45 America/Los_Angeles
+
+已完成：
+
+- 再次运行真实浏览器点击验收，核心玩法链路通过
+- 新增 `scripts/publish-with-token.sh`，可用临时 GitHub token 创建/复用仓库、推送代码并开启 Pages
+- 新增 `scripts/publish-from-clipboard.sh`，可从 macOS 剪贴板读取临时 token，避免 token 进入命令历史
+- 提交包脚本补齐 API 代理、Vercel 配置、Pages workflow、浏览器测试脚本和 token 发布脚本
+
+验证：
+
+- `bash scripts/smoke-test.sh` 通过
+- `bash -n` 检查发布脚本通过
+
+阻塞：
+
+- `gh` 仍未登录
+- SSH key 没有 GitHub 写权限
+- GitHub 连接器写入仓库返回 403
+- 线上 Pages 仍未发布
+
+下一步：
+
+- 等待一个带 `repo`、`workflow` 权限的临时 GitHub token
+- token 到位后运行 `bash scripts/publish-from-clipboard.sh`
+- 发布后检查 `https://newrudy.github.io/zhihu-chuiniubi-judge/` 并补最终提交链接
 - 已截图检查桌面首页、结果页、移动端首页
 
 阻塞：
