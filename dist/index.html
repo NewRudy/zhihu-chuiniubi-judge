@@ -724,6 +724,7 @@ blockquote {
             <div class="share-actions">
               <button class="primary-button" id="saveCardBtn" type="button">保存小卡片</button>
               <button class="ghost-button" id="copyBtn" type="button">复制这句话</button>
+              <button class="ghost-button" id="moreLineBtn" type="button">再给我一句</button>
               <button class="ghost-button" id="againBtn" type="button">换个问题</button>
             </div>
             <p id="shareHint">卡片会带上你的问题、知乎回声和最后那句话。</p>
@@ -1545,6 +1546,69 @@ const genericEndings = {
   },
 };
 
+const lineVariants = {
+  tired: [
+    "你不是不够努力。你只是太久没有被允许停下来。",
+    "先别急着证明自己还行。今天能好好睡一觉，也算赢回来一点。",
+  ],
+  permission: [
+    "你要的不是别人替你点头，是终于承认自己已经站到那一边了。",
+    "有些决定不是突然发生的，它只是等你不再假装没听见。",
+  ],
+  caution: [
+    "慢一点不是退缩。慢一点，是给真正想要的东西留一条活路。",
+    "别让一时的痛快，替长期的你签字。",
+  ],
+  action: [
+    "答案如果是真的，应该能被拆成今天就能做的一小步。",
+    "别只在心里赢一次。把它落到一个小动作里，世界才会开始回应你。",
+  ],
+  hope: [
+    "你还没放弃，只是需要一个理由相信继续不算傻。",
+    "有些光不是照过来的，是你走到一半才发现自己还带着。",
+  ],
+  closure: [
+    "不是所有结束都叫失败。有些结束，是你终于把自己还给自己。",
+    "放下不是否认曾经重要，是承认你不能一直住在旧剧情里。",
+  ],
+  boundary: [
+    "边界不是冷漠，是你终于不再把自己排除在关系之外。",
+    "能留下的人，会学着适应你的边界；留不下的人，本来也没有认真接住你。",
+  ],
+  belonging: [
+    "你不是太需要认同。你只是太久没有听见一句：这样想也可以。",
+    "人有时候不是缺答案，是缺一个不用解释太多的同类。",
+  ],
+  prove: [
+    "想证明自己不丢人。只是别让别人的否定，替你决定一生的方向。",
+    "你可以赢，但最好是为了成为自己，而不是为了给谁看。",
+  ],
+  risk: [
+    "上头的时候，世界看起来像机会；冷下来以后，机会才会露出成本。",
+    "想翻盘很正常，但别让不甘心坐在驾驶座上。",
+  ],
+  patience: [
+    "不是每一次没追上，都是错过。有些没赚到的钱，是你没亏掉的命。",
+    "能慢下来的人，才有机会看清自己到底在追什么。",
+  ],
+  regret: [
+    "别让上一轮的遗憾，继续替下一轮的你做决定。",
+    "你可以想补回来，但别把回本当成唯一的人生叙事。",
+  ],
+  guilt: [
+    "你不需要靠一直委屈自己，来证明你值得被喜欢。",
+    "照顾自己不是亏欠别人，是终于把自己也算进去了。",
+  ],
+  loss: [
+    "害怕空出来的位置很正常，但空不代表错，它也可能是在长新的生活。",
+    "别把害怕失去，误认成还应该继续。",
+  ],
+  escape: [
+    "想逃并不丢人。丢人的是一直疼，却还要装作这里很好。",
+    "离开可以是答案，但最好别让它成为唯一能想象的答案。",
+  ],
+};
+
 const state = {
   route: null,
   step: 0,
@@ -1552,6 +1616,7 @@ const state = {
   answers: [],
   customText: "",
   result: null,
+  lineIndex: 0,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -1692,13 +1757,17 @@ function finishRoute() {
   const key = topKey(state.scores);
   const ending = route.endings[key] || route.endings[Object.keys(route.endings)[0]] || genericEndings.hope;
   const title = state.customText || route.title;
+  const lineBank = [ending.line, ...(lineVariants[key] || lineVariants.hope)];
   state.result = {
     ...ending,
+    key,
+    lineBank,
     title,
     routeTitle: route.title,
     zhihuTitle: `${route.title} - 知乎相似高赞`,
     zhihuUrl: zhihuSearchUrl(route.zhihuQuery),
   };
+  state.lineIndex = 0;
   $("#resultSide").textContent = ending.side;
   $("#deepQuestion").textContent = ending.deep;
   $("#zhihuLink").textContent = state.result.zhihuTitle;
@@ -1720,6 +1789,23 @@ function finishRoute() {
     .join("");
   drawShareCard();
   setView("result");
+}
+
+function refreshResultLine() {
+  const bank = state.result?.lineBank || [state.result?.line].filter(Boolean);
+  if (!bank.length) return;
+  const line = bank[state.lineIndex % bank.length];
+  state.result.line = line;
+  $("#finalLine").textContent = line;
+  $("#copyBtn").textContent = "复制这句话";
+  drawShareCard();
+}
+
+function moreLine() {
+  if (!state.result) return;
+  state.lineIndex += 1;
+  refreshResultLine();
+  $("#shareHint").textContent = "换了一句新的回声。觉得这一句更准，就保存它。";
 }
 
 function drawWrapped(ctx, text, x, y, maxWidth, lineHeight, maxLines = 12) {
@@ -1813,6 +1899,7 @@ function bindEvents() {
   $("#backBtn").addEventListener("click", () => setView("home"));
   $("#resultBackBtn").addEventListener("click", () => setView("home"));
   $("#againBtn").addEventListener("click", () => setView("home"));
+  $("#moreLineBtn").addEventListener("click", moreLine);
   $("#copyBtn").addEventListener("click", copyResult);
   $("#saveCardBtn").addEventListener("click", saveCard);
   $("#loginBtn").addEventListener("click", demoLogin);

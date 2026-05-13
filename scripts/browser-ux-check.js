@@ -66,6 +66,10 @@ async function run() {
   assert(canvasBox && canvasBox.width > 250 && canvasBox.height > 300, "share canvas should be visible");
   await page.getByRole("button", { name: "复制这句话" }).click();
   await expectVisible(page, "已复制", "copy feedback");
+  const originalLine = await page.locator("#finalLine").innerText();
+  await page.getByRole("button", { name: "再给我一句" }).click();
+  const refreshedLine = await page.locator("#finalLine").innerText();
+  assert(refreshedLine !== originalLine, "more line should refresh final line");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "保存小卡片" }).click();
   const download = await downloadPromise;
