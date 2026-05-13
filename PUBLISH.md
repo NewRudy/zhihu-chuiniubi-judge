@@ -1,46 +1,63 @@
 # 发布说明
 
-当前项目已经准备好 GitHub 发布，但本机 GitHub CLI 尚未登录。
+## 当前状态
 
-## 已准备好
+- 代码已通过 SSH 推送到：`https://github.com/NewRudy/zhihu-chuiniubi-judge`
+- 最新提交：`1d2db66 Rebuild as Zhihu resonance game`
+- 已额外推送 `gh-pages` 分支，方便切换 GitHub Pages 的分支发布模式。
+- 本地测试通过：`bash scripts/smoke-test.sh`
 
-- 本地 Git 仓库
-- 完整静态应用源码
-- `dist/index.html` 单文件部署包
-- GitHub Pages workflow
-- 本地 GitHub CLI：`tools/gh_2.92.0_macOS_arm64/bin/gh`
+## GitHub Pages
 
-## 发布步骤
+当前仓库的 Pages API 返回 404，Actions 中 `Setup Pages` 步骤失败，说明仓库设置里很可能还没有启用 Pages。
 
-```bash
-./tools/gh_2.92.0_macOS_arm64/bin/gh auth login
-bash scripts/publish-github.sh
+需要在 GitHub 网页上手动打开：
+
+1. 进入仓库 `Settings`
+2. 打开 `Pages`
+3. 如果选择 GitHub Actions：把 Source 设为 `GitHub Actions`，然后重新运行 Actions
+4. 如果选择分支部署：把 Source 设为 `Deploy from a branch`，Branch 选 `gh-pages`，目录选 `/root`
+
+预期应用地址：
+
+```text
+https://newrudy.github.io/zhihu-chuiniubi-judge/
 ```
 
-## 如果 GitHub CLI 登录不稳定
+## 新仓库发布
 
-创建一个临时 GitHub token，权限选择 `repo` 和 `workflow`，然后在本机执行：
+这台机器 SSH 已经可用，但 GitHub 不允许通过 SSH push 自动创建不存在的新仓库；当前也没有可用的 `gh` 命令。
 
-```bash
-GH_TOKEN=你的临时token bash scripts/publish-with-token.sh
+如果要新建仓库，先在 GitHub 网页创建：
+
+```text
+NewRudy/zhihu-chuiniubi
 ```
 
-这个脚本不会把 token 写入 `origin`，只会在本次 `git push` 使用临时
-HTTP header。推送完成后可以立刻到 GitHub 设置页撤销该 token。
-
-如果不想把 token 粘进命令历史，可以先复制 token，然后运行：
+然后本地执行：
 
 ```bash
-bash scripts/publish-from-clipboard.sh
+git remote set-url origin git@github.com:NewRudy/zhihu-chuiniubi.git
+git push -u origin main
+git push -f origin gh-pages
 ```
 
-脚本会从 macOS 剪贴板读取 token，并拒绝使用不像 GitHub token 的内容。
+如果保留当前仓库，只需要继续：
 
-预期产物：
+```bash
+git push origin main
+```
 
-- 仓库：`https://github.com/NewRudy/zhihu-chuiniubi-judge`
-- 应用：`https://newrudy.github.io/zhihu-chuiniubi-judge/`
+## 提交包
 
-## 如果只想最快上线单文件版
+生成提交包：
 
-可将 `dist/index.html` 上传到任意静态托管服务，例如 Vercel、Netlify、GitHub Pages 或飞书附件预览不推荐。
+```bash
+bash scripts/package-submission.sh
+```
+
+输出：
+
+```text
+dist/zhihu-chuiniubi-submission.zip
+```
