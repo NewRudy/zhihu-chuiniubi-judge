@@ -3,20 +3,20 @@
 ## 当前状态
 
 - 代码已通过 SSH 推送到：`https://github.com/NewRudy/zhihu-chuiniubi-judge`
-- 最新提交：`1d2db66 Rebuild as Zhihu resonance game`
-- 已额外推送 `gh-pages` 分支，方便切换 GitHub Pages 的分支发布模式。
+- 已推送 `main` 分支和 `gh-pages` 分支。
+- `gh-pages` 的 GitHub Pages 动态构建已经成功。
 - 本地测试通过：`bash scripts/smoke-test.sh`
 
 ## GitHub Pages
 
-当前仓库的 Pages API 返回 404，Actions 中 `Setup Pages` 步骤失败，说明仓库设置里很可能还没有启用 Pages。
+当前采用 `gh-pages` 分支发布。主分支里不再保留 GitHub Actions Pages workflow，避免仓库没有启用 Actions Pages source 时持续失败。
 
-需要在 GitHub 网页上手动打开：
+如果线上地址打不开，请在 GitHub 网页确认：
 
 1. 进入仓库 `Settings`
 2. 打开 `Pages`
-3. 如果选择 GitHub Actions：把 Source 设为 `GitHub Actions`，然后重新运行 Actions
-4. 如果选择分支部署：把 Source 设为 `Deploy from a branch`，Branch 选 `gh-pages`，目录选 `/root`
+3. Source 设为 `Deploy from a branch`
+4. Branch 选 `gh-pages`，目录选 `/root`
 
 预期应用地址：
 
