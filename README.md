@@ -21,7 +21,7 @@ python3 -m http.server 5173
 
 ## 部署
 
-这是一个纯静态站点，可以直接部署到 GitHub Pages、Vercel 或 Netlify。
+前端可以作为静态站点部署到 GitHub Pages、Vercel 或 Netlify。若要隐藏知乎 API token 并启用实时热榜，推荐使用 Vercel/Netlify 的 Serverless 代理运行 `api/challenges.js`。
 
 ## 路演与提交材料
 
@@ -50,7 +50,7 @@ bash scripts/smoke-test.sh
 
 路演快捷参数：
 
-- `?mode=pitch`：直接进入评委演示局
+- `?mode=pitch`：直接进入现场盲测局
 - `?mode=hot`：直接进入热榜实验室
 - `?mode=result`：直接展示结果卡
 - `?result=1`：直接展示结果卡和创作者灵感转化
