@@ -448,6 +448,42 @@ h1 {
   line-height: 1.38;
 }
 
+.choice-trace {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 880px;
+  margin: 0 0 26px;
+}
+
+.trace-chip {
+  display: grid;
+  gap: 7px;
+  min-height: 106px;
+  border: 1.5px solid rgba(36, 40, 51, 0.72);
+  padding: 13px;
+  background: rgba(255, 253, 247, 0.7);
+}
+
+.trace-chip span {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.trace-chip strong {
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.trace-chip em {
+  color: var(--muted);
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
 .zhihu-witness {
   display: grid;
   gap: 10px;
@@ -527,6 +563,10 @@ blockquote {
 
   .play-shell,
   .result-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .choice-trace {
     grid-template-columns: 1fr;
   }
 

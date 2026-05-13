@@ -897,6 +897,18 @@ function finishRoute() {
   $("#zhihuEcho").textContent = ending.echo;
   $("#finalLine").textContent = ending.line;
   $("#nextStep").textContent = ending.next;
+  $("#choiceTrace").innerHTML = state.answers
+    .slice(0, 3)
+    .map(
+      (answer, index) => `
+        <div class="trace-chip">
+          <span>第 ${index + 1} 个选择</span>
+          <strong>${answer.label}</strong>
+          <em>${answer.hint}</em>
+        </div>
+      `
+    )
+    .join("");
   drawShareCard();
   setView("result");
 }

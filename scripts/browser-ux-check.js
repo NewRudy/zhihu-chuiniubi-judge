@@ -58,6 +58,7 @@ async function run() {
   await expectVisible(page, "你想到辞职时", "quit first question");
   await answerCurrentRoute(page);
   await expectVisible(page, "你的回声", "result");
+  await expectVisible(page, "第 1 个选择", "choice trace");
   await expectVisible(page, "知乎相似问题", "zhihu witness");
   const zhihuHref = await page.locator("#zhihuLink").getAttribute("href");
   assert(zhihuHref && zhihuHref.includes("zhihu.com/search"), `unexpected zhihu link: ${zhihuHref}`);
