@@ -5,161 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="知乎吹牛逼鉴定局：你能分清社区高赞、AI仿深刻和纯吹牛逼吗？"
+      content="知乎吹牛逼：从一个真实想问的问题出发，找到与你站在同一边的知乎回声。"
     />
-    <title>知乎吹牛逼鉴定局</title>
+    <title>知乎吹牛逼</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="app-shell">
-      <section class="stage" aria-live="polite">
-        <div class="masthead">
-          <div>
-            <p class="eyebrow">知乎吹牛逼鉴定局</p>
-            <h1>你能分清高赞、AI、纯吹吗？</h1>
+      <section class="hero" id="homeView">
+        <nav class="topbar" aria-label="顶部导航">
+          <div class="brand-mark">
+            <span>知乎</span>
+            <strong>吹牛逼</strong>
           </div>
-          <div class="score-pill" id="scorePill">0 / 0</div>
+          <button class="login-button" id="loginBtn" type="button">用知乎登录</button>
+        </nav>
+
+        <div class="hero-copy">
+          <p class="kicker">问一句，借一口气。</p>
+          <h1>今天，你想把哪个问题丢给知乎？</h1>
+          <p class="subtitle" id="subtitleText">有些答案，会先在心里排队。</p>
         </div>
 
-        <section class="intro" id="introPanel">
-          <div class="intro-copy">
-            <p class="kicker">鉴定局开庭</p>
-            <h2>三段回答摆在你面前，只有一种是真的有东西。</h2>
-            <p>
-              每轮给你一个知乎式问题和三段回答。你要给每段盖章：
-              <strong>社区高赞风格</strong>、<strong>AI 仿深刻</strong>，或
-              <strong>纯吹牛逼</strong>。最后生成你的抗吹牛逼人格卡。
-            </p>
-          </div>
-          <div class="intro-actions">
-            <button class="primary-button" id="startBtn">开始鉴定</button>
-            <button class="ghost-button" id="hotBtn">打开今日案卷</button>
-            <button class="ghost-button" id="pitchBtn">现场盲测</button>
-          </div>
-          <div class="evidence-strip" aria-label="待审废话样本">
-            <span>底层逻辑</span>
-            <span>情绪价值</span>
-            <span>长期主义</span>
-            <span>认知闭环</span>
-          </div>
-        </section>
+        <section class="question-sky" id="questionSky" aria-label="问题星图"></section>
 
-        <section class="game hidden" id="gamePanel">
-          <div class="round-meta">
-            <span id="roundLabel">第 1 局</span>
-            <div class="progress-track" aria-hidden="true">
-              <span id="progressBar"></span>
-            </div>
+        <form class="ask-box" id="customForm">
+          <label for="customQuestion">没有你的问题？自己问一句。</label>
+          <div class="ask-line">
+            <input
+              id="customQuestion"
+              name="customQuestion"
+              type="text"
+              autocomplete="off"
+              placeholder="比如：我要不要辞职去开一家小店？"
+            />
+            <button class="primary-button" type="submit">丢进去</button>
           </div>
-
-          <div class="question-block">
-            <p class="kicker">本局热议问题</p>
-            <h2 id="questionText"></h2>
-            <p id="questionHook"></p>
-          </div>
-
-          <div class="answer-grid" id="answerGrid"></div>
-
-          <div class="judge-bar">
-            <p id="roundHint">给三段回答分别盖章，全部完成后揭晓。</p>
-            <button class="primary-button" id="revealBtn" disabled>揭晓鉴定</button>
-          </div>
-        </section>
-
-        <section class="result hidden" id="resultPanel">
-          <div class="result-hero">
-            <p class="kicker">鉴定完成</p>
-            <h2 id="resultTitle"></h2>
-            <p id="resultCopy"></p>
-          </div>
-
-          <div class="result-grid">
-            <div class="metric-tile">
-              <span>抗吹牛逼指数</span>
-              <strong id="finalScore">0</strong>
-            </div>
-            <div class="metric-tile">
-              <span>识破回答</span>
-              <strong id="finalCorrect">0/15</strong>
-            </div>
-            <div class="metric-tile">
-              <span>最容易中招</span>
-              <strong id="finalWeakness">底层逻辑</strong>
-            </div>
-          </div>
-
-          <div class="creator-insight">
-            <div>
-              <p class="kicker">创作者灵感转化</p>
-              <h3 id="creatorTitle">把鉴定结果变成一篇能发的回答</h3>
-              <p id="creatorAngle"></p>
-            </div>
-            <div class="script-box">
-              <span>高赞开头</span>
-              <p id="creatorOpening"></p>
-            </div>
-            <div class="script-box">
-              <span>评论区钩子</span>
-              <p id="creatorHook"></p>
-            </div>
-          </div>
-
-          <div class="share-panel">
-            <div>
-              <h3>把结果甩给朋友</h3>
-              <p id="shareText"></p>
-            </div>
-            <div class="share-actions">
-              <button class="primary-button" id="copyBtn">复制挑战文案</button>
-              <button class="ghost-button" id="restartBtn">再鉴定一次</button>
-            </div>
-          </div>
-
-          <canvas id="shareCanvas" width="1200" height="1600" aria-label="分享图"></canvas>
-        </section>
+          <p id="matchHint">会自动匹配一条最接近的知乎式路径。</p>
+        </form>
       </section>
 
-      <aside class="side-lab">
-        <div class="case-card">
-          <p class="kicker">今日案卷</p>
-          <h2>热榜里最像真话的废话，已经排队等你盖章。</h2>
-          <div class="case-stack" aria-label="今日案卷示例">
-            <span>AI 写作焦虑</span>
-            <span>年轻人关系现场</span>
-            <span>职场正确废话</span>
-          </div>
-        </div>
+      <section class="play-view hidden" id="playView" aria-live="polite">
+        <button class="back-button" id="backBtn" type="button">返回星图</button>
 
-        <div class="bureau-card">
-          <p class="kicker">鉴定播报</p>
-          <h2 id="bureauTitle">今天先从基础案卷开审。</h2>
-          <p id="apiStatus">点击「打开今日案卷」，鉴定员会先翻热榜和高赞样本；案卷少时，就从典型话术里补齐。</p>
-          <div class="bureau-meter">
-            <span>废话浓度</span>
-            <strong id="bureauHeat">72%</strong>
-          </div>
-        </div>
+        <div class="play-shell">
+          <aside class="case-file">
+            <p class="kicker">匿名问题</p>
+            <h2 id="routeTitle"></h2>
+            <p id="routeLead"></p>
+            <div class="route-tags" id="routeTags"></div>
+            <div class="progress-card">
+              <span id="stepLabel">第 1 问</span>
+              <div class="progress-track"><i id="progressBar"></i></div>
+            </div>
+          </aside>
 
-        <form class="creator-lab" id="creatorForm">
-          <p class="kicker">出题给朋友</p>
-          <label for="topicInput">丢一个话题，现场伪造三段“很懂”的回答</label>
-          <textarea
-            id="topicInput"
-            rows="4"
-            placeholder="比如：年轻人为什么不爱结婚了？"
-          ></textarea>
-          <button class="ghost-button" type="submit">生成挑战局</button>
-          <p id="creatorOutput"></p>
-          <a class="challenge-link hidden" id="challengeLink" href="#">打开这条挑战链接</a>
-        </form>
-      </aside>
+          <section class="choice-stage">
+            <p class="question-note" id="questionNote">别想太久，选第一眼像你的。</p>
+            <h3 id="questionText"></h3>
+            <div class="option-grid" id="optionGrid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="result-view hidden" id="resultView" aria-live="polite">
+        <button class="back-button" id="resultBackBtn" type="button">再问一个</button>
+
+        <div class="result-layout">
+          <article class="answer-card" id="answerCard">
+            <p class="kicker">你的回声</p>
+            <h2 id="resultSide"></h2>
+            <p class="deep-question" id="deepQuestion"></p>
+
+            <div class="zhihu-witness">
+              <span>知乎相似问题</span>
+              <a id="zhihuLink" href="#" target="_blank" rel="noreferrer"></a>
+              <p id="zhihuEcho"></p>
+            </div>
+
+            <blockquote id="finalLine"></blockquote>
+            <p class="next-step" id="nextStep"></p>
+          </article>
+
+          <aside class="share-lab">
+            <canvas id="shareCanvas" width="1080" height="1440" aria-label="结果卡片"></canvas>
+            <div class="share-actions">
+              <button class="primary-button" id="saveCardBtn" type="button">保存小卡片</button>
+              <button class="ghost-button" id="copyBtn" type="button">复制这句话</button>
+              <button class="ghost-button" id="againBtn" type="button">换个问题</button>
+            </div>
+            <p id="shareHint">卡片会带上你的问题、知乎回声和最后那句话。</p>
+          </aside>
+        </div>
+      </section>
     </main>
-
-    <div class="hidden" aria-hidden="true">
-      <button id="demoBtn" type="button">演示案卷</button>
-      <button id="resultDemoBtn" type="button">结果卡</button>
-    </div>
 
     <script src="./script.js"></script>
   </body>

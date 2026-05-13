@@ -6,7 +6,7 @@ cd "$ROOT"
 
 python3 scripts/build-dist.py >/dev/null
 
-OUT="dist/zhihu-chuiniubi-judge-submission.zip"
+OUT="dist/zhihu-chuiniubi-submission.zip"
 rm -f "$OUT"
 
 zip -q -r "$OUT" \

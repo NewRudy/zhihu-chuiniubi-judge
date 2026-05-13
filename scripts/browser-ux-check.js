@@ -3,117 +3,85 @@ const { chromium } = require("playwright");
 const BASE_URL = process.env.APP_URL || "http://127.0.0.1:4173";
 
 function assert(condition, message) {
-  if (!condition) {
-    throw new Error(message);
-  }
+  if (!condition) throw new Error(message);
 }
 
 async function expectVisible(page, text, label = text) {
-  await page.getByText(text, { exact: false }).waitFor({ state: "visible", timeout: 5000 });
+  await page.getByText(text, { exact: false }).first().waitFor({ state: "visible", timeout: 5000 });
   return label;
 }
 
-async function chooseOneStampPerCard(page) {
-  const cards = page.locator(".answer-card");
-  const cardCount = await cards.count();
-  assert(cardCount === 3, `expected 3 answer cards, got ${cardCount}`);
-  for (let index = 0; index < cardCount; index += 1) {
-    await cards.nth(index).locator(".stamp-button").nth(index % 3).click();
-  }
-}
-
 async function checkNoHorizontalOverflow(page, label) {
-  const overflow = await page.evaluate(() => {
-    const root = document.documentElement;
-    return root.scrollWidth - root.clientWidth;
-  });
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   assert(overflow <= 2, `${label} has horizontal overflow: ${overflow}px`);
 }
 
+async function answerCurrentRoute(page) {
+  for (let step = 0; step < 3; step += 1) {
+    await page.locator(".option-button").nth(step % 2).click();
+  }
+}
+
 async function run() {
-  const browser = await chromium.launch({
-    channel: "chrome",
-    headless: true,
-  });
+  const browser = await chromium.launch({ channel: "chrome", headless: true });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
     permissions: ["clipboard-read", "clipboard-write"],
+    acceptDownloads: true,
   });
   const page = await context.newPage();
   const logs = [];
   page.on("console", (message) => {
-    if (["error", "warning"].includes(message.type())) {
-      logs.push(`${message.type()}: ${message.text()}`);
-    }
+    if (["error", "warning"].includes(message.type())) logs.push(`${message.type()}: ${message.text()}`);
   });
   page.on("pageerror", (error) => logs.push(`pageerror: ${error.message}`));
 
   await page.goto(BASE_URL);
-  await expectVisible(page, "你能分清高赞、AI、纯吹吗？", "home headline");
+  await expectVisible(page, "今天，你想把哪个问题丢给知乎？", "home headline");
+  await expectVisible(page, "我炒股能不能赚钱？", "stock bubble");
   await checkNoHorizontalOverflow(page, "desktop home");
 
-  await page.getByRole("button", { name: "开始鉴定" }).click();
-  await expectVisible(page, "本局热议问题", "game question");
-  assert(await page.getByRole("button", { name: "揭晓鉴定" }).isDisabled(), "reveal should start disabled");
-  await chooseOneStampPerCard(page);
-  assert(!(await page.getByRole("button", { name: "揭晓鉴定" }).isDisabled()), "reveal should enable after 3 stamps");
-  await page.getByRole("button", { name: "揭晓鉴定" }).click();
-  const revealCount = await page.locator(".reveal").count();
-  assert(revealCount === 3, `expected 3 reveal explanations, got ${revealCount}`);
-  await expectVisible(page, "本局识破", "round feedback");
-  await page.getByRole("button", { name: "下一局" }).click();
-  await expectVisible(page, "第 2 局", "next round");
+  await page.getByRole("button", { name: "用知乎登录" }).click();
+  await expectVisible(page, "知乎授权演示已开启", "login demo");
 
-  await page.goto(BASE_URL);
-  await page.getByRole("button", { name: "打开今日案卷" }).click();
-  await expectVisible(page, "本局热议问题", "hot mode");
-  const hotStatus = await page.locator("#apiStatus").innerText();
-  assert(hotStatus.includes("热榜") || hotStatus.includes("接口"), `unexpected hot status: ${hotStatus}`);
-
-  await page.goto(`${BASE_URL}/?mode=hot`);
-  await expectVisible(page, "本局热议问题", "hot mode boot param");
-
-  await page.goto(BASE_URL);
-  await page.getByRole("button", { name: "现场盲测" }).click();
-  await expectVisible(page, "这三段里，哪段最像真洞察", "pitch mode");
-
-  await page.goto(`${BASE_URL}/?mode=pitch`);
-  await expectVisible(page, "这三段里，哪段最像真洞察", "pitch mode boot param");
-
-  await page.goto(`${BASE_URL}/?result=1`);
-  await expectVisible(page, "鉴定完成", "result hero");
-  await expectVisible(page, "创作者灵感转化", "creator insight");
-  await expectVisible(page, "把结果甩给朋友", "share panel");
+  await page.getByRole("button", { name: "要不要裸辞？" }).click({ force: true });
+  await expectVisible(page, "匿名问题", "route case");
+  await expectVisible(page, "你想到辞职时", "quit first question");
+  await answerCurrentRoute(page);
+  await expectVisible(page, "你的回声", "result");
+  await expectVisible(page, "知乎相似问题", "zhihu witness");
+  const zhihuHref = await page.locator("#zhihuLink").getAttribute("href");
+  assert(zhihuHref && zhihuHref.includes("zhihu.com/search"), `unexpected zhihu link: ${zhihuHref}`);
   const canvasBox = await page.locator("#shareCanvas").boundingBox();
   assert(canvasBox && canvasBox.width > 250 && canvasBox.height > 300, "share canvas should be visible");
-  await page.getByRole("button", { name: "复制挑战文案" }).click();
+  await page.getByRole("button", { name: "复制这句话" }).click();
   await expectVisible(page, "已复制", "copy feedback");
 
-  await page.goto(`${BASE_URL}/?mode=result`);
-  await expectVisible(page, "鉴定完成", "result mode boot param");
+  await page.getByRole("button", { name: "换个问题" }).click();
+  await expectVisible(page, "我炒股能不能赚钱？", "home after result");
+  await page.getByRole("button", { name: "我炒股能不能赚钱？" }).click({ force: true });
+  await expectVisible(page, "这里只谈心态", "stock route");
+  await answerCurrentRoute(page);
+  await expectVisible(page, "钱会放大判断", "stock result line");
 
   await page.goto(BASE_URL);
-  const topic = "年轻人为什么讨厌装懂式建议？";
-  await page.getByLabel("丢一个话题，现场伪造三段“很懂”的回答").fill(topic);
-  await page.getByRole("button", { name: "生成挑战局" }).click();
-  const customQuestion = await page.locator("#questionText").innerText();
-  assert(customQuestion === topic, `custom challenge question mismatch: ${customQuestion}`);
-  await expectVisible(page, "已生成挑战局", "custom challenge feedback");
-  const href = await page.locator("#challengeLink").getAttribute("href");
-  assert(href && href.includes(encodeURIComponent(topic)), "challenge link should carry topic");
+  await page.getByPlaceholder("比如：我要不要辞职去开一家小店？").fill("我想辞职开咖啡店");
+  await page.getByRole("button", { name: "丢进去" }).click();
+  await expectVisible(page, "我想辞职开咖啡店", "custom question");
+  await answerCurrentRoute(page);
+  await expectVisible(page, "保存小卡片", "share action");
 
-  await page.goto(`${BASE_URL}/?topic=${encodeURIComponent(topic)}`);
-  const bootTopicQuestion = await page.locator("#questionText").innerText();
-  assert(bootTopicQuestion === topic, `topic boot param mismatch: ${bootTopicQuestion}`);
+  await page.goto(`${BASE_URL}/?route=stock`);
+  await expectVisible(page, "你最想从股市里拿到什么？", "route param");
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE_URL);
+  await expectVisible(page, "今天，你想把哪个问题丢给知乎？", "mobile home");
   await checkNoHorizontalOverflow(page, "mobile home");
-  await page.getByRole("button", { name: "开始鉴定" }).click();
-  await checkNoHorizontalOverflow(page, "mobile game");
-  await chooseOneStampPerCard(page);
-  await page.getByRole("button", { name: "揭晓鉴定" }).click();
-  await expectVisible(page, "本局识破", "mobile reveal feedback");
+  await page.getByRole("button", { name: "该不该复合？" }).click({ force: true });
+  await checkNoHorizontalOverflow(page, "mobile play");
+  await answerCurrentRoute(page);
+  await checkNoHorizontalOverflow(page, "mobile result");
 
   await browser.close();
   const seriousLogs = logs.filter((line) => !line.includes("favicon"));

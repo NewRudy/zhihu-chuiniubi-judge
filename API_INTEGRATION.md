@@ -1,17 +1,52 @@
-# API 接入方案
+# 知乎 API 接入方案
 
-当前 Demo 已实现 Serverless API 代理：`api/challenges.js`。它负责把知乎官方接口返回的热榜、问题、高赞回答和统计字段，归一化成前端可以直接玩的三段式挑战局。
+当前 Demo 已经把核心体验做成静态可跑版本。知乎数据接入分两层：
 
-## 为什么需要代理
+1. **静态 fallback**：前端结果页根据线路给出知乎相似问题搜索链接，保证路演不中断。
+2. **正式 API 模式**：接入官方热榜、问题、高赞回答和 OAuth 后，把搜索链接替换成真实问题/回答链接和摘要。
 
-如果知乎官方 API 需要 token，不能把 token 放进前端静态 JS。代理层负责：
+## 用户登录
 
-- 从环境变量读取 token
-- 请求知乎官方 API
-- 标准化成前端游戏题库
-- API 失败时回退到本地题库，保证路演不中断
+首页已预留「用知乎登录」入口。当前是授权演示状态；拿到官方 OAuth 配置后，建议接入：
 
-## 环境变量
+- `client_id`
+- `redirect_uri`
+- `scope`
+- `code -> token` 的后端交换
+- 用户基础资料与兴趣标签
+
+OAuth token 不应放在前端静态 JS 中，建议由 Serverless 代理保存和转发。
+
+## 高赞回答接入
+
+理想返回给前端的结构：
+
+```json
+{
+  "questionTitle": "要不要裸辞？",
+  "matchedQuestion": "裸辞后的人后来怎么样了？",
+  "questionUrl": "https://www.zhihu.com/question/xxx",
+  "answerUrl": "https://www.zhihu.com/question/xxx/answer/yyy",
+  "voteupCount": 12345,
+  "answerExcerpt": "高赞回答摘要",
+  "source": "zhihu-api"
+}
+```
+
+前端需要的不是长回答全文，而是：
+
+- 真实问题标题
+- 高赞回答链接
+- 高赞摘要或 excerpt
+- 赞同数/热度等可信提示
+
+AI 层只负责把它压缩成 1-2 句「高赞回声」，不要在页面上暴露复杂技术说明。
+
+## 代理层
+
+仓库保留了 `api/challenges.js`，它已经支持从环境变量读取知乎 API base URL、token、热榜路径和回答路径。旧的三段式挑战局格式后续可以改造成结果页需要的 `matchedQuestion/answerUrl/answerExcerpt` 格式。
+
+环境变量示例：
 
 ```bash
 ZHIHU_API_BASE=https://example.zhihu-api.local
@@ -20,77 +55,18 @@ ZHIHU_HOT_PATH=/hot
 ZHIHU_ANSWERS_PATH=/questions/{question_id}/answers
 ```
 
-`ZHIHU_API_TOKEN` 可以为空；如果官方接口需要鉴权，代理默认使用
-`Authorization: Bearer <token>`。如果文档要求其他 Header，可以改：
+如果官方鉴权不是 Bearer Token，可继续使用：
 
 ```bash
 ZHIHU_API_AUTH_HEADER=X-API-Key
 ZHIHU_API_AUTH_PREFIX=
 ```
 
-## 前端接口
+## 今晚降级策略
 
-前端优先请求：
+- GitHub Pages 先部署静态版，确保可展示。
+- 每条线路先给知乎搜索链接，链接关键词已贴近问题。
+- 结果页文案先使用本地精写高赞回声。
+- 拿到官方 API/OAuth 后，把链接和摘要替换为真实高赞回答。
 
-```text
-/api/challenges
-```
-
-返回结构：
-
-```json
-{
-  "source": "zhihu-api",
-  "rounds": [
-    {
-      "question": "问题标题",
-      "hook": "这一局的提示",
-      "answers": [
-        {
-          "kind": "human",
-          "lure": "话术标签",
-          "text": "回答正文",
-          "reveal": "揭晓解释"
-        }
-      ]
-    }
-  ]
-}
-```
-
-## 已支持的官方数据形态
-
-`api/challenges.js` 现在不是只认一个死格式，会自动从这些字段里找热榜/问题列表：
-
-- `questions`
-- `data.questions`
-- `data.items`
-- `data.list`
-- `data.records`
-- `data.hot_list`
-- `data.result.items`
-- `data.result.list`
-- `data`
-- `items`
-- `hot`
-- `hot_list`
-- `list`
-- `records`
-- `result.questions`
-- `result.items`
-- `result.list`
-
-问题标题会从 `title`、`question`、`name`、`title_area.text`、`target.question.title`
-等字段里自动提取；回答正文会从 `content`、`content.text`、`excerpt`、`target.content`
-等字段里自动提取。统计值支持数字和带单位文本，例如 `98000`、`9.8 万`、`1.2 万`。
-
-每个问题会尝试读取 `answers`、`top_answers`、`answer_list` 等高赞回答字段；
-如果官方热榜接口只返回问题、不返回回答，可配置 `ZHIHU_ANSWERS_PATH`，代理会用
-`question_id` 再拉一次回答列表，并按 `voteup_count`、`upvote_count`、`like_count`
-等字段优先选高赞内容。当前烟测已经包含一个模拟知乎接口，验证嵌套标题、高赞回答和“万”单位统计都能被正常归一化。
-
-## 部署选择
-
-- **GitHub Pages**：只能运行静态版，使用 `data/hot-rounds.json` fallback。
-- **Vercel**：可以运行 `api/challenges.js`，适合隐藏知乎 API token。
-- **Netlify/Cloudflare Workers**：同理，需要把代理函数改成对应平台格式。
+这样路演时可以稳定演示体验，同时清楚说明知乎 API 会如何提升数据真实性和个性化。
