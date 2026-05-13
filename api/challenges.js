@@ -1,7 +1,7 @@
 const fallbackRounds = [
   {
     question: "为什么 AI 写得越像人，越容易让人不信任？",
-    hook: "这题适合路演：它正好解释我们为什么要做鉴定游戏。",
+    hook: "这题适合开场：它正好解释为什么要训练自己的废话雷达。",
     answers: [
       {
         kind: "human",
@@ -25,42 +25,220 @@ const fallbackRounds = [
   },
 ];
 
+const htmlTagPattern = /<[^>]+>/g;
+
 function json(response, status = 200) {
   response.statusCode = status;
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
 }
 
-function normalizeZhihuPayload(payload) {
-  if (!payload || !Array.isArray(payload.questions)) return fallbackRounds;
-  return payload.questions.slice(0, 5).map((item) => ({
-    question: item.title || item.question || "一个值得讨论的问题",
-    hook: item.excerpt || item.hook || "来自知乎 API 的实时问题，已转成鉴定局挑战。",
-    answers: item.answers || fallbackRounds[0].answers,
-  }));
+function cleanText(value, fallback = "") {
+  return String(value || fallback)
+    .replace(htmlTagPattern, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function firstText(source, keys, fallback = "") {
+  for (const key of keys) {
+    const value = source?.[key];
+    if (typeof value === "string" && value.trim()) return cleanText(value);
+  }
+  return fallback;
+}
+
+function numberFrom(source, keys) {
+  for (const key of keys) {
+    const value = Number(source?.[key]);
+    if (Number.isFinite(value)) return value;
+  }
+  return 0;
+}
+
+function pickList(payload) {
+  if (Array.isArray(payload)) return payload;
+  const candidates = [
+    payload?.questions,
+    payload?.data?.questions,
+    payload?.data?.items,
+    payload?.data,
+    payload?.items,
+    payload?.hot,
+    payload?.hot_list,
+    payload?.list,
+    payload?.records,
+    payload?.result?.questions,
+    payload?.result?.items,
+    payload?.result,
+  ];
+  return candidates.find(Array.isArray) || [];
+}
+
+function pickAnswers(item) {
+  const candidates = [
+    item.answers,
+    item.top_answers,
+    item.topAnswers,
+    item.answer_list,
+    item.answerList,
+    item?.question?.answers,
+    item?.target?.answers,
+  ];
+  const list = candidates.find(Array.isArray) || [];
+  return [...list].sort(
+    (a, b) =>
+      numberFrom(b, ["voteup_count", "upvote_count", "like_count", "likes", "vote_count"]) -
+      numberFrom(a, ["voteup_count", "upvote_count", "like_count", "likes", "vote_count"])
+  );
+}
+
+function questionId(item) {
+  return (
+    item.question_id ||
+    item.questionId ||
+    item.id ||
+    item?.question?.id ||
+    item?.target?.id ||
+    item?.target?.question?.id
+  );
+}
+
+function questionTitle(item) {
+  return firstText(
+    item,
+    ["title", "question", "name"],
+    firstText(item?.question || item?.target || item?.target?.question, ["title", "question", "name"])
+  );
+}
+
+function answerText(answer) {
+  if (typeof answer === "string") return cleanText(answer);
+  return firstText(answer, ["content", "excerpt", "text", "summary", "answer", "body"]);
+}
+
+function normalizeProvidedAnswer(answer, fallbackKind, title) {
+  const text = answerText(answer);
+  if (!text) return null;
+  const kind = answer.kind || answer.type || fallbackKind;
+  const votes = numberFrom(answer, ["voteup_count", "upvote_count", "like_count", "likes", "vote_count"]);
+  return {
+    kind,
+    lure: answer.lure || answer.label || (kind === "human" ? "高赞痕迹" : "可疑话术"),
+    text: text.slice(0, 220),
+    reveal:
+      answer.reveal ||
+      (kind === "human"
+        ? `这段来自高赞素材的表达痕迹${votes ? `，赞同数约 ${votes}` : ""}：它有具体判断，不只是在堆概念。`
+        : `这段围绕「${title}」制造了顺滑感，但需要继续追问证据和场景。`),
+  };
+}
+
+function syntheticAiAnswer(title) {
+  return {
+    kind: "ai",
+    lure: "三层结构",
+    text: `「${title}」要分三层看：表层是个体选择，中层是结构变化，底层是时代情绪。当三者发生耦合，就会形成一种集体性的认知偏移。`,
+    reveal: "这段结构很稳，但过于万能，换一个问题也几乎能套上。",
+  };
+}
+
+function syntheticBluffAnswer(title) {
+  return {
+    kind: "bluff",
+    lure: "宏大词",
+    text: `真正理解「${title}」的人，会发现这已经不是一个普通问题，而是文明转向的信号。所有具体争论，都只是冰山露出水面的 3%。`,
+    reveal: "它直接跳到文明转向，没有证据，属于气势型纯吹。",
+  };
+}
+
+function buildRound(item) {
+  const title = questionTitle(item) || "一个值得讨论的问题";
+  const rawAnswers = pickAnswers(item);
+  const normalizedAnswers = rawAnswers
+    .map((answer, index) => normalizeProvidedAnswer(answer, index === 0 ? "human" : "ai", title))
+    .filter(Boolean);
+
+  const hasTypedAnswers = normalizedAnswers.some((answer) =>
+    ["human", "ai", "bluff"].includes(answer.kind)
+  );
+
+  const humanAnswer =
+    normalizedAnswers.find((answer) => answer.kind === "human") ||
+    normalizedAnswers[0] || {
+      kind: "human",
+      lure: "高赞痕迹",
+      text: `讨论「${title}」时，最重要的是先把问题落回具体处境：谁承担成本，谁获得好处，谁拥有选择权。`,
+      reveal: "它把问题落到了具体利益和处境里，比单纯升华更像真实高赞回答。",
+    };
+
+  const answers = hasTypedAnswers
+    ? [
+        humanAnswer,
+        normalizedAnswers.find((answer) => answer.kind === "ai") || syntheticAiAnswer(title),
+        normalizedAnswers.find((answer) => answer.kind === "bluff") || syntheticBluffAnswer(title),
+      ]
+    : [humanAnswer, syntheticAiAnswer(title), syntheticBluffAnswer(title)];
+
+  return {
+    question: title,
+    hook:
+      firstText(item, ["hook", "excerpt", "description"], "") ||
+      "这一题混入了热榜问题和高赞表达痕迹，别被漂亮结构带跑。",
+    answers,
+  };
+}
+
+async function fetchJson(url, token) {
+  const authHeader = process.env.ZHIHU_API_AUTH_HEADER || "Authorization";
+  const authPrefix = process.env.ZHIHU_API_AUTH_PREFIX ?? "Bearer";
+  const headers = { Accept: "application/json" };
+  if (token) {
+    headers[authHeader] = authPrefix ? `${authPrefix} ${token}` : token;
+  }
+  const upstream = await fetch(url, { headers });
+  if (!upstream.ok) throw new Error(`Upstream ${upstream.status}`);
+  return upstream.json();
+}
+
+async function enrichWithAnswers(apiBase, token, item) {
+  const answersPath = process.env.ZHIHU_ANSWERS_PATH;
+  const id = questionId(item);
+  if (!answersPath || !id || pickAnswers(item).length) return item;
+  const url = `${apiBase}${answersPath.replace("{question_id}", encodeURIComponent(id))}`;
+  try {
+    const payload = await fetchJson(url, token);
+    return { ...item, answers: pickList(payload) };
+  } catch {
+    return item;
+  }
+}
+
+async function normalizeZhihuPayload(payload, apiBase, token) {
+  const items = pickList(payload).slice(0, 5);
+  if (!items.length) return fallbackRounds;
+  const enriched = await Promise.all(items.map((item) => enrichWithAnswers(apiBase, token, item)));
+  return enriched.map(buildRound);
 }
 
 module.exports = async function handler(request, response) {
   json(response);
 
-  const apiBase = process.env.ZHIHU_API_BASE;
-  const apiToken = process.env.ZHIHU_API_TOKEN;
+  const apiBase = process.env.ZHIHU_API_BASE?.replace(/\/$/, "");
+  const apiToken = process.env.ZHIHU_API_TOKEN || "";
+  const hotPath = process.env.ZHIHU_HOT_PATH || "/hot";
 
-  if (!apiBase || !apiToken) {
+  if (!apiBase) {
     response.end(JSON.stringify({ source: "fallback", rounds: fallbackRounds }));
     return;
   }
 
   try {
-    const upstream = await fetch(`${apiBase.replace(/\/$/, "")}/hot`, {
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        Accept: "application/json",
-      },
-    });
-    if (!upstream.ok) throw new Error(`Upstream ${upstream.status}`);
-    const payload = await upstream.json();
-    response.end(JSON.stringify({ source: "zhihu-api", rounds: normalizeZhihuPayload(payload) }));
+    const payload = await fetchJson(`${apiBase}${hotPath}`, apiToken);
+    const rounds = await normalizeZhihuPayload(payload, apiBase, apiToken);
+    response.end(JSON.stringify({ source: "zhihu-api", rounds }));
   } catch (error) {
     response.end(
       JSON.stringify({

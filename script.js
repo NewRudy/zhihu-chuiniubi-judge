@@ -146,8 +146,14 @@ function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
+function setBureauStatus(title, copy, heat = "72%") {
+  $("#bureauTitle").textContent = title;
+  $("#apiStatus").textContent = copy;
+  $("#bureauHeat").textContent = heat;
+}
+
 async function loadHotRounds() {
-  $("#apiStatus").textContent = "正在读取热榜挑战题库...";
+  setBureauStatus("正在翻今日案卷。", "先找热榜，再找高赞痕迹。案卷到了就开审。", "88%");
   const params = new URLSearchParams(location.search);
   const isStaticLocal = ["127.0.0.1", "localhost", ""].includes(location.hostname);
   const isGitHubPages = location.hostname.endsWith("github.io");
@@ -158,10 +164,13 @@ async function loadHotRounds() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
       const hotRounds = payload.rounds || [];
-      $("#apiStatus").textContent =
+      setBureauStatus(
+        "今日案卷已送达。",
         payload.source === "zhihu-api"
-          ? "已连接知乎 API，正在使用实时热榜挑战题库。"
-          : "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
+          ? "这局混入了热榜问题和高赞回答痕迹，别太相信第一眼。"
+          : "今天先用缓存案卷开审，手感不掉线。",
+        payload.source === "zhihu-api" ? "96%" : "82%"
+      );
       return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
     }
     throw new Error("static hot rounds");
@@ -170,14 +179,16 @@ async function loadHotRounds() {
       const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const hotRounds = await response.json();
-      $("#apiStatus").textContent =
+      setBureauStatus(
+        "今日案卷已送达。",
         shouldUseApiProxy
-          ? "热榜代理暂不可用，已自动降级到本地题库，路演不会断。"
-          : "已加载本地热榜实验题库。上线到 API 环境后可切换实时热榜。";
+          ? "实时线人暂时失联，缓存案卷先顶上。"
+          : "先审缓存热榜。别小看它，废话浓度很高。",
+        shouldUseApiProxy ? "76%" : "82%"
+      );
       return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
     } catch {
-      $("#apiStatus").textContent =
-        "热榜接口暂不可用，已自动降级到基础题库，路演不会断。";
+      setBureauStatus("基础案卷开审。", "今日案卷没取到，先拿经典题练手。", "68%");
       return BASE_ROUNDS;
     }
   }
@@ -189,7 +200,7 @@ async function startGame(mode = "shuffle") {
     rounds = await loadHotRounds();
   } else {
     rounds = mode === "demo" ? [...BASE_ROUNDS] : shuffle(BASE_ROUNDS);
-    $("#apiStatus").textContent = "当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。";
+    setBureauStatus("今天先从基础案卷开审。", "基础案卷已经洗牌。先别急，里面有几段特别像真的。", "72%");
   }
   current = 0;
   guesses = {};
@@ -365,7 +376,7 @@ function showDemoResult() {
   introPanel.classList.add("hidden");
   gamePanel.classList.add("hidden");
   resultPanel.classList.remove("hidden");
-  $("#apiStatus").textContent = "结果卡演示模式已开启：用于路演快速展示传播与创作者转化。";
+  setBureauStatus("结果卡已盖章。", "这张卡适合截图甩给朋友，让他也来测测抗吹浓度。", "91%");
   renderResult();
 }
 
@@ -499,6 +510,7 @@ function createChallenge(topic) {
   gamePanel.classList.remove("hidden");
   renderRound();
   $("#creatorOutput").textContent = "已生成挑战局，第一题就是你的话题。链接里带题目，可丢给朋友。";
+  setBureauStatus("朋友挑战已生成。", "这一题是你递交的案卷，谁先被漂亮废话骗到谁请喝咖啡。", "89%");
   $("#challengeLink").href = challengeUrl;
   $("#challengeLink").classList.remove("hidden");
   $("#challengeLink").textContent = "打开这条挑战链接";
@@ -507,26 +519,26 @@ function createChallenge(topic) {
 function pitchMode() {
   rounds = [
     {
-      question: "评委现场盲测：这三段里，哪段最像真洞察？",
-      hook: "路演专用局：先让评委参与，再解释产品价值。",
+      question: "现场盲测：这三段里，哪段最像真洞察？",
+      hook: "先别看答案。越像标准总结的那段，越值得怀疑。",
       answers: [
         {
           kind: "human",
-          lure: "产品洞察",
-          text: "这个产品好玩的地方不是让 AI 写得更像人，而是让用户亲手发现：一段话看起来很聪明，和它真的有洞察，中间隔着证据、场景和可反驳性。",
+          lure: "判断标准",
+          text: "一段回答看起来很聪明，和它真的有洞察，中间隔着证据、场景和可反驳性。真正好的回答不怕被追问，因为它知道自己从哪里来。",
           reveal: "它直接说明产品判断标准：证据、场景、可反驳性。"
         },
         {
           kind: "ai",
-          lure: "赛道话术",
-          text: "本项目通过游戏化机制重构知识社区内容消费链路，以互动鉴别驱动用户心智升级，并形成从娱乐传播到创作者生产力的闭环。",
-          reveal: "路演味很浓，但每个词都偏抽象，是 AI 式项目包装。"
+          lure: "正确废话",
+          text: "这个问题需要回到表达生态的系统性变迁中理解。内容质量不只是文本问题，更是用户认知、平台机制与技术范式共同作用的结果。",
+          reveal: "每个词都对，但没有回答“怎样才算真的有洞察”。"
         },
         {
           kind: "bluff",
           lure: "宏大叙事",
-          text: "我们不是在做一个网页，而是在重新定义 AI 时代人类对真理的最后防线。每一次点击，都是文明对幻觉的反击。",
-          reveal: "很好笑，也很热血，但除了气势没有解释产品。"
+          text: "会分辨真洞察的人，本质上已经站在语言文明的上游。其他人只是被时代语料反复冲刷的低维接收器。",
+          reveal: "把判断能力包装成优越感，气势足，解释少。"
         }
       ]
     },
@@ -536,7 +548,7 @@ function pitchMode() {
   introPanel.classList.add("hidden");
   resultPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
-  $("#apiStatus").textContent = "评委演示模式已开启：第一局用于路演互动破冰。";
+  setBureauStatus("现场盲测开审。", "这局很短，但足够分出谁会被正确废话带走。", "93%");
   renderRound();
 }
 

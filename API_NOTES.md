@@ -4,6 +4,9 @@
 
 用户提供了官方飞书文档链接，但目前无法通过公开网页抓取到正文。普通搜索也没有找到可公开索引的 API 文档内容。
 
+前端和代理层已经按“真实热榜 + 高赞回答”优先设计：只要拿到 `ZHIHU_API_BASE`
+和可用路径，就能通过环境变量切换到真实数据，不需要改页面交互。
+
 ## 待从官方文档确认
 
 - API base URL
@@ -31,18 +34,13 @@
 
 ## 当前 Demo 可接入点
 
-`script.js` 里的 `BASE_ROUNDS` 是当前离线题库。后续可以替换为：
+`script.js` 里的 `BASE_ROUNDS` 是当前离线题库。今日案卷会优先请求：
 
 ```js
-async function loadRounds() {
-  try {
-    const response = await fetch("/api/zhihu/challenges");
-    return await response.json();
-  } catch {
-    return BASE_ROUNDS;
-  }
-}
+fetch("/api/challenges")
 ```
+
+`api/challenges.js` 负责把官方返回的热榜、问题、高赞回答字段归一化成三段式挑战局。
 
 ## 对产品有价值的知乎 API 能力
 
@@ -61,4 +59,3 @@ async function loadRounds() {
 - AI 仿深刻答案生成
 - 纯吹牛逼答案生成
 - 创作者选题建议
-

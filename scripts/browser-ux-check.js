@@ -70,7 +70,7 @@ async function run() {
   assert(hotStatus.includes("热榜") || hotStatus.includes("接口"), `unexpected hot status: ${hotStatus}`);
 
   await page.goto(`${BASE_URL}/?mode=pitch`);
-  await expectVisible(page, "评委现场盲测", "pitch mode");
+  await expectVisible(page, "这三段里，哪段最像真洞察", "pitch mode");
 
   await page.goto(`${BASE_URL}/?result=1`);
   await expectVisible(page, "鉴定完成", "result hero");
@@ -83,7 +83,7 @@ async function run() {
 
   await page.goto(BASE_URL);
   const topic = "年轻人为什么讨厌装懂式建议？";
-  await page.getByLabel("输入一个话题，生成一局朋友挑战题").fill(topic);
+  await page.getByLabel("丢一个话题，现场伪造三段“很懂”的回答").fill(topic);
   await page.getByRole("button", { name: "生成挑战局" }).click();
   const customQuestion = await page.locator("#questionText").innerText();
   assert(customQuestion === topic, `custom challenge question mismatch: ${customQuestion}`);

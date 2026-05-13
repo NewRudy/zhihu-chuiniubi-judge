@@ -165,6 +165,34 @@ strong {
   min-height: 360px;
 }
 
+.evidence-strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  align-self: end;
+  margin-top: 34px;
+}
+
+.evidence-strip span {
+  display: grid;
+  place-items: center;
+  min-height: 74px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+  color: var(--white);
+  font-size: clamp(18px, 2.2vw, 30px);
+  font-weight: 1000;
+  transform: rotate(-1deg);
+}
+
+.evidence-strip span:nth-child(2),
+.evidence-strip span:nth-child(4) {
+  background: var(--acid);
+  color: var(--ink);
+  transform: rotate(1deg);
+}
+
 .intro-copy {
   max-width: 860px;
 }
@@ -461,48 +489,79 @@ strong {
   grid-template-rows: auto auto minmax(0, 1fr);
 }
 
-.lab-card,
-.api-card,
+.case-card,
+.bureau-card,
 .creator-lab {
   padding: 22px;
 }
 
-.lab-card {
+.case-card {
   border-bottom: 2px solid var(--line);
   background: var(--coral);
 }
 
-.lab-card .kicker,
-.lab-card p,
-.lab-card li {
+.case-card .kicker,
+.case-card p {
   color: rgba(25, 24, 21, 0.78);
 }
 
-.lab-card h2 {
+.case-card h2 {
   font-size: 32px;
 }
 
-.lab-card ul {
-  padding-left: 18px;
-  margin-bottom: 0;
+.case-stack {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
 }
 
-.api-card {
+.case-stack span {
+  display: block;
+  border: 2px solid var(--line);
+  padding: 10px 12px;
+  background: rgba(255, 250, 240, 0.76);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.bureau-card {
   display: grid;
   gap: 10px;
   border-bottom: 2px solid var(--line);
   background: var(--cyan);
 }
 
-.api-card h2 {
+.bureau-card h2 {
   margin-bottom: 0;
   font-size: 28px;
 }
 
-.api-card p {
+.bureau-card p {
   margin-bottom: 0;
   color: rgba(25, 24, 21, 0.76);
   font-weight: 800;
+}
+
+.bureau-meter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  border: 2px solid var(--line);
+  padding: 12px;
+  background: var(--white);
+}
+
+.bureau-meter span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 1000;
+}
+
+.bureau-meter strong {
+  font-size: 32px;
+  line-height: 1;
 }
 
 .creator-lab {
@@ -563,8 +622,8 @@ strong {
     grid-template-rows: auto;
   }
 
-  .lab-card,
-  .api-card {
+  .case-card,
+  .bureau-card {
     border-right: 2px solid var(--line);
     border-bottom: 0;
   }
@@ -593,20 +652,29 @@ strong {
   .creator-insight,
   .judge-bar,
   .share-panel,
-  .side-lab {
+  .side-lab,
+  .evidence-strip {
     grid-template-columns: 1fr;
+  }
+
+  .evidence-strip {
+    margin-top: 8px;
+  }
+
+  .evidence-strip span {
+    min-height: 48px;
   }
 
   .answer-card {
     min-height: auto;
   }
 
-  .lab-card {
+  .case-card {
     border-right: 0;
     border-bottom: 2px solid var(--line);
   }
 
-  .api-card {
+  .bureau-card {
     border-right: 0;
     border-bottom: 2px solid var(--line);
   }
@@ -619,7 +687,7 @@ strong {
       <section class="stage" aria-live="polite">
         <div class="masthead">
           <div>
-            <p class="eyebrow">知乎吹牛逼 · AI 脑洞实验室</p>
+            <p class="eyebrow">知乎吹牛逼鉴定局</p>
             <h1>你能分清高赞、AI、纯吹吗？</h1>
           </div>
           <div class="score-pill" id="scorePill">0 / 0</div>
@@ -637,9 +705,13 @@ strong {
           </div>
           <div class="intro-actions">
             <button class="primary-button" id="startBtn">开始鉴定</button>
-            <button class="ghost-button" id="hotBtn">今日热榜实验室</button>
-            <button class="ghost-button" id="demoBtn">直接看路演局</button>
-            <button class="ghost-button" id="resultDemoBtn">直接看结果卡</button>
+            <button class="ghost-button" id="hotBtn">打开今日案卷</button>
+          </div>
+          <div class="evidence-strip" aria-label="待审废话样本">
+            <span>底层逻辑</span>
+            <span>情绪价值</span>
+            <span>长期主义</span>
+            <span>认知闭环</span>
           </div>
         </section>
 
@@ -719,26 +791,29 @@ strong {
       </section>
 
       <aside class="side-lab">
-        <div class="lab-card">
-          <p class="kicker">玩法亮点</p>
-          <h2>不是测你是谁，是测你会被哪种“很懂”骗。</h2>
-          <ul>
-            <li>朋友互相挑战，天然有轻微胜负欲。</li>
-            <li>结果卡可截图，标签有冒犯感但不伤人。</li>
-            <li>每局揭晓“为什么像高赞”，可转成创作者灵感模板。</li>
-          </ul>
+        <div class="case-card">
+          <p class="kicker">今日案卷</p>
+          <h2>热榜里最像真话的废话，已经排队等你盖章。</h2>
+          <div class="case-stack" aria-label="今日案卷示例">
+            <span>AI 写作焦虑</span>
+            <span>年轻人关系现场</span>
+            <span>职场正确废话</span>
+          </div>
         </div>
 
-        <div class="api-card">
-          <p class="kicker">知乎 API 接入位</p>
-          <h2>热榜题库可离线演示，也能接官方接口。</h2>
-          <p id="apiStatus">当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。</p>
-          <button class="ghost-button" id="pitchBtn">评委演示模式</button>
+        <div class="bureau-card">
+          <p class="kicker">鉴定播报</p>
+          <h2 id="bureauTitle">今天先从基础案卷开审。</h2>
+          <p id="apiStatus">点击「打开今日案卷」，系统会优先翻热榜和高赞素材；翻不到就用本地案卷顶上。</p>
+          <div class="bureau-meter">
+            <span>废话浓度</span>
+            <strong id="bureauHeat">72%</strong>
+          </div>
         </div>
 
         <form class="creator-lab" id="creatorForm">
-          <p class="kicker">临场造题</p>
-          <label for="topicInput">输入一个话题，生成一局朋友挑战题</label>
+          <p class="kicker">出题给朋友</p>
+          <label for="topicInput">丢一个话题，现场伪造三段“很懂”的回答</label>
           <textarea
             id="topicInput"
             rows="4"
@@ -746,10 +821,16 @@ strong {
           ></textarea>
           <button class="ghost-button" type="submit">生成挑战局</button>
           <p id="creatorOutput"></p>
-          <a class="challenge-link hidden" id="challengeLink" href="#">复制链接后可丢进群里挑战</a>
+          <a class="challenge-link hidden" id="challengeLink" href="#">打开这条挑战链接</a>
         </form>
       </aside>
     </main>
+
+    <div class="hidden" aria-hidden="true">
+      <button id="demoBtn" type="button">演示案卷</button>
+      <button id="resultDemoBtn" type="button">结果卡</button>
+      <button id="pitchBtn" type="button">现场盲测</button>
+    </div>
 
     <script>
 window.__HOT_ROUNDS__ = [
@@ -974,8 +1055,14 @@ function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
+function setBureauStatus(title, copy, heat = "72%") {
+  $("#bureauTitle").textContent = title;
+  $("#apiStatus").textContent = copy;
+  $("#bureauHeat").textContent = heat;
+}
+
 async function loadHotRounds() {
-  $("#apiStatus").textContent = "正在读取热榜挑战题库...";
+  setBureauStatus("正在翻今日案卷。", "先找热榜，再找高赞痕迹。案卷到了就开审。", "88%");
   const params = new URLSearchParams(location.search);
   const isStaticLocal = ["127.0.0.1", "localhost", ""].includes(location.hostname);
   const isGitHubPages = location.hostname.endsWith("github.io");
@@ -986,10 +1073,13 @@ async function loadHotRounds() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
       const hotRounds = payload.rounds || [];
-      $("#apiStatus").textContent =
+      setBureauStatus(
+        "今日案卷已送达。",
         payload.source === "zhihu-api"
-          ? "已连接知乎 API，正在使用实时热榜挑战题库。"
-          : "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
+          ? "这局混入了热榜问题和高赞回答痕迹，别太相信第一眼。"
+          : "今天先用缓存案卷开审，手感不掉线。",
+        payload.source === "zhihu-api" ? "96%" : "82%"
+      );
       return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
     }
     throw new Error("static hot rounds");
@@ -998,14 +1088,16 @@ async function loadHotRounds() {
       const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const hotRounds = await response.json();
-      $("#apiStatus").textContent =
+      setBureauStatus(
+        "今日案卷已送达。",
         shouldUseApiProxy
-          ? "热榜代理暂不可用，已自动降级到本地题库，路演不会断。"
-          : "已加载本地热榜实验题库。上线到 API 环境后可切换实时热榜。";
+          ? "实时线人暂时失联，缓存案卷先顶上。"
+          : "先审缓存热榜。别小看它，废话浓度很高。",
+        shouldUseApiProxy ? "76%" : "82%"
+      );
       return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
     } catch {
-      $("#apiStatus").textContent =
-        "热榜接口暂不可用，已自动降级到基础题库，路演不会断。";
+      setBureauStatus("基础案卷开审。", "今日案卷没取到，先拿经典题练手。", "68%");
       return BASE_ROUNDS;
     }
   }
@@ -1017,7 +1109,7 @@ async function startGame(mode = "shuffle") {
     rounds = await loadHotRounds();
   } else {
     rounds = mode === "demo" ? [...BASE_ROUNDS] : shuffle(BASE_ROUNDS);
-    $("#apiStatus").textContent = "当前使用本地挑战题库，官方 API 文档到位后切换到实时热榜。";
+    setBureauStatus("今天先从基础案卷开审。", "基础案卷已经洗牌。先别急，里面有几段特别像真的。", "72%");
   }
   current = 0;
   guesses = {};
@@ -1193,7 +1285,7 @@ function showDemoResult() {
   introPanel.classList.add("hidden");
   gamePanel.classList.add("hidden");
   resultPanel.classList.remove("hidden");
-  $("#apiStatus").textContent = "结果卡演示模式已开启：用于路演快速展示传播与创作者转化。";
+  setBureauStatus("结果卡已盖章。", "这张卡适合截图甩给朋友，让他也来测测抗吹浓度。", "91%");
   renderResult();
 }
 
@@ -1327,6 +1419,7 @@ function createChallenge(topic) {
   gamePanel.classList.remove("hidden");
   renderRound();
   $("#creatorOutput").textContent = "已生成挑战局，第一题就是你的话题。链接里带题目，可丢给朋友。";
+  setBureauStatus("朋友挑战已生成。", "这一题是你递交的案卷，谁先被漂亮废话骗到谁请喝咖啡。", "89%");
   $("#challengeLink").href = challengeUrl;
   $("#challengeLink").classList.remove("hidden");
   $("#challengeLink").textContent = "打开这条挑战链接";
@@ -1335,26 +1428,26 @@ function createChallenge(topic) {
 function pitchMode() {
   rounds = [
     {
-      question: "评委现场盲测：这三段里，哪段最像真洞察？",
-      hook: "路演专用局：先让评委参与，再解释产品价值。",
+      question: "现场盲测：这三段里，哪段最像真洞察？",
+      hook: "先别看答案。越像标准总结的那段，越值得怀疑。",
       answers: [
         {
           kind: "human",
-          lure: "产品洞察",
-          text: "这个产品好玩的地方不是让 AI 写得更像人，而是让用户亲手发现：一段话看起来很聪明，和它真的有洞察，中间隔着证据、场景和可反驳性。",
+          lure: "判断标准",
+          text: "一段回答看起来很聪明，和它真的有洞察，中间隔着证据、场景和可反驳性。真正好的回答不怕被追问，因为它知道自己从哪里来。",
           reveal: "它直接说明产品判断标准：证据、场景、可反驳性。"
         },
         {
           kind: "ai",
-          lure: "赛道话术",
-          text: "本项目通过游戏化机制重构知识社区内容消费链路，以互动鉴别驱动用户心智升级，并形成从娱乐传播到创作者生产力的闭环。",
-          reveal: "路演味很浓，但每个词都偏抽象，是 AI 式项目包装。"
+          lure: "正确废话",
+          text: "这个问题需要回到表达生态的系统性变迁中理解。内容质量不只是文本问题，更是用户认知、平台机制与技术范式共同作用的结果。",
+          reveal: "每个词都对，但没有回答“怎样才算真的有洞察”。"
         },
         {
           kind: "bluff",
           lure: "宏大叙事",
-          text: "我们不是在做一个网页，而是在重新定义 AI 时代人类对真理的最后防线。每一次点击，都是文明对幻觉的反击。",
-          reveal: "很好笑，也很热血，但除了气势没有解释产品。"
+          text: "会分辨真洞察的人，本质上已经站在语言文明的上游。其他人只是被时代语料反复冲刷的低维接收器。",
+          reveal: "把判断能力包装成优越感，气势足，解释少。"
         }
       ]
     },
@@ -1364,7 +1457,7 @@ function pitchMode() {
   introPanel.classList.add("hidden");
   resultPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
-  $("#apiStatus").textContent = "评委演示模式已开启：第一局用于路演互动破冰。";
+  setBureauStatus("现场盲测开审。", "这局很短，但足够分出谁会被正确废话带走。", "93%");
   renderRound();
 }
 
