@@ -44,6 +44,10 @@ bash scripts/package-submission.sh
 bash scripts/smoke-test.sh
 ```
 
+当环境中可用 Playwright 时，`smoke-test.sh` 会顺带运行
+`scripts/browser-ux-check.js`，真实点击开局、盖章、揭晓、下一局、热榜、
+路演、结果卡、复制反馈、临场造题链接和移动端布局。
+
 路演快捷参数：
 
 - `?mode=pitch`：直接进入评委演示局

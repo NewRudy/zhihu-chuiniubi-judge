@@ -149,8 +149,8 @@ strong {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
   gap: 24px;
-  align-items: end;
-  min-height: 430px;
+  align-items: center;
+  min-height: 360px;
 }
 
 .intro-copy {

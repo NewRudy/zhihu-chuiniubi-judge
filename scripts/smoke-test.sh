@@ -46,6 +46,15 @@ curl -fsS "http://127.0.0.1:$PORT/?result=1" >/dev/null
 curl -fsS "http://127.0.0.1:$PORT/dist/?topic=AI%E5%86%99%E4%BD%9C" >/dev/null
 curl -fsS "http://127.0.0.1:$PORT/data/hot-rounds.json" >/dev/null
 
+if node -e "require('playwright')" >/dev/null 2>&1; then
+  APP_URL="http://127.0.0.1:$PORT" node scripts/browser-ux-check.js
+elif [ -d "$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright" ]; then
+  APP_URL="http://127.0.0.1:$PORT" \
+    NODE_PATH="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules" \
+    "$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node" \
+    scripts/browser-ux-check.js
+fi
+
 bash scripts/package-submission.sh >/dev/null
 test -s dist/zhihu-chuiniubi-judge-submission.zip
 

@@ -161,8 +161,8 @@ strong {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
   gap: 24px;
-  align-items: end;
-  min-height: 430px;
+  align-items: center;
+  min-height: 360px;
 }
 
 .intro-copy {
@@ -976,21 +976,32 @@ function shuffle(items) {
 
 async function loadHotRounds() {
   $("#apiStatus").textContent = "正在读取热榜挑战题库...";
+  const params = new URLSearchParams(location.search);
+  const isStaticLocal = ["127.0.0.1", "localhost", ""].includes(location.hostname);
+  const isGitHubPages = location.hostname.endsWith("github.io");
+  const shouldUseApiProxy = params.get("api") === "1" || (!isStaticLocal && !isGitHubPages);
   try {
-    const payload = { source: "fallback", rounds: window.__HOT_ROUNDS__ || [] };
-    const hotRounds = payload.rounds || [];
-    $("#apiStatus").textContent =
-      payload.source === "zhihu-api"
-        ? "已连接知乎 API，正在使用实时热榜挑战题库。"
-        : "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
-    return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
+    if (shouldUseApiProxy) {
+      const response = await fetch("./api/challenges", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const hotRounds = payload.rounds || [];
+      $("#apiStatus").textContent =
+        payload.source === "zhihu-api"
+          ? "已连接知乎 API，正在使用实时热榜挑战题库。"
+          : "已加载热榜实验题库。官方 API 文档到位后，这里会切换成实时知乎热榜。";
+      return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
+    }
+    throw new Error("static hot rounds");
   } catch {
     try {
       const response = await fetch("./data/hot-rounds.json", { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const hotRounds = await response.json();
       $("#apiStatus").textContent =
-        "热榜代理暂不可用，已自动降级到本地题库，路演不会断。";
+        shouldUseApiProxy
+          ? "热榜代理暂不可用，已自动降级到本地题库，路演不会断。"
+          : "已加载本地热榜实验题库。上线到 API 环境后可切换实时热榜。";
       return [...hotRounds, ...BASE_ROUNDS].slice(0, 5);
     } catch {
       $("#apiStatus").textContent =

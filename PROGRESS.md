@@ -202,3 +202,30 @@
 - 运行完整 smoke test 并提交
 - 如果 GitHub 授权到位，立即发布
 - 如果官方 API 文档到位，替换代理里的占位 `/hot` 映射
+
+## 2026-05-12 19:25 America/Los_Angeles
+
+已完成：
+
+- 每小时自检任务已补充浏览器真实点击、趣味反馈、审美、分享性验收要求
+- 新增 `scripts/browser-ux-check.js`
+- 浏览器自动点击覆盖：开局、盖章、揭晓、下一局、热榜、评委演示、结果卡、复制反馈、临场造题链接、移动端布局
+- `scripts/smoke-test.sh` 已接入浏览器 UX 验收
+- 热榜模式在 GitHub Pages/本地静态环境下优先读取本地题库，避免 `/api/challenges` 404 噪音；正式 API 环境仍可通过代理接入
+- 首屏布局收紧，减少桌面端中部空白，让按钮和玩法更快进入视线
+
+验证：
+
+- `NODE_PATH=... node scripts/browser-ux-check.js` 通过
+- `bash scripts/smoke-test.sh` 通过
+- 已截图检查桌面首页、结果页、移动端首页
+
+阻塞：
+
+- `gh` 仍需用户完成 GitHub CLI 授权后才能推送和发布 Pages
+- 官方知乎 API 文档正文仍不可访问，实时接口仍使用代理骨架和本地 fallback
+
+下一步：
+
+- 用户完成 GitHub CLI 授权后立即推送仓库并检查 GitHub Pages
+- 继续打磨题库密度和结果卡传播文案
