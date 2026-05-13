@@ -526,6 +526,30 @@ h1 {
   line-height: 1.7;
 }
 
+.related-questions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.related-questions a {
+  border: 1.5px solid rgba(36, 40, 51, 0.64);
+  padding: 8px 10px;
+  background: var(--blue-soft);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.related-questions a:hover,
+.related-questions a:focus-visible {
+  border-color: var(--blue);
+  outline: none;
+}
+
 blockquote {
   max-width: 900px;
   margin: 34px 0 22px;
@@ -713,6 +737,7 @@ blockquote {
               <span>知乎相似问题</span>
               <a id="zhihuLink" href="#" target="_blank" rel="noreferrer"></a>
               <p id="zhihuEcho"></p>
+              <div class="related-questions" id="relatedQuestions" aria-label="同一派问题"></div>
             </div>
 
             <blockquote id="finalLine"></blockquote>
@@ -1529,6 +1554,19 @@ const routes = {
   },
 };
 
+const relatedQuestionBank = {
+  quit: ["裸辞后的人后来怎么样了？", "怎样判断自己是真的想辞职，还是太累了？", "离职前应该做哪些准备？"],
+  reunion: ["分手后该不该复合？", "怎么判断复合是不是重蹈覆辙？", "放不下前任怎么办？"],
+  breakup: ["什么样的恋爱应该分手？", "如何体面结束一段关系？", "长期消耗的感情还有必要继续吗？"],
+  career: ["转行真的来得及吗？", "如何判断自己适不适合转行？", "从零开始学一个新行业现实吗？"],
+  startup: ["普通人创业最容易死在哪里？", "副业做到什么程度可以辞职？", "创业前要做哪些最小验证？"],
+  stock: ["普通人炒股能稳定赚钱吗？", "亏损后如何调整投资心态？", "股票投资里最重要的能力是什么？"],
+  effort: ["为什么努力很久还是没有结果？", "如何走出持续自我怀疑？", "怎样判断是方法错了还是方向错了？"],
+  ordinary: ["觉得自己很普通怎么办？", "如何停止和同龄人比较？", "普通人如何找到自己的价值感？"],
+  city: ["要不要离开一座城市？", "回老家还是留在大城市？", "换城市真的能重新开始吗？"],
+  please: ["如何停止讨好别人？", "怎么建立自己的边界感？", "为什么我总是害怕拒绝别人？"],
+};
+
 const genericEndings = {
   hope: {
     side: "你更像站在：还愿意相信事情会变好的人",
@@ -1615,6 +1653,7 @@ const state = {
   scores: {},
   answers: [],
   customText: "",
+  routeId: "",
   result: null,
   lineIndex: 0,
 };
@@ -1709,6 +1748,7 @@ function pickRouteFromText(text) {
 
 function startRoute(routeId, label = "") {
   state.route = routes[routeId] || routes.effort;
+  state.routeId = routes[routeId] ? routeId : "effort";
   state.step = 0;
   state.scores = {};
   state.answers = [];
@@ -1766,6 +1806,7 @@ function finishRoute() {
     routeTitle: route.title,
     zhihuTitle: `${route.title} - 知乎相似高赞`,
     zhihuUrl: zhihuSearchUrl(route.zhihuQuery),
+    related: relatedQuestionBank[state.routeId] || relatedQuestionBank.effort,
   };
   state.lineIndex = 0;
   $("#resultSide").textContent = ending.side;
@@ -1773,6 +1814,12 @@ function finishRoute() {
   $("#zhihuLink").textContent = state.result.zhihuTitle;
   $("#zhihuLink").href = state.result.zhihuUrl;
   $("#zhihuEcho").textContent = ending.echo;
+  $("#relatedQuestions").innerHTML = state.result.related
+    .map(
+      (question) =>
+        `<a href="${zhihuSearchUrl(question)}" target="_blank" rel="noreferrer">${question}</a>`
+    )
+    .join("");
   $("#finalLine").textContent = ending.line;
   $("#nextStep").textContent = ending.next;
   $("#choiceTrace").innerHTML = state.answers

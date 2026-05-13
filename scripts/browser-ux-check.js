@@ -60,8 +60,11 @@ async function run() {
   await expectVisible(page, "你的回声", "result");
   await expectVisible(page, "第 1 个选择", "choice trace");
   await expectVisible(page, "知乎相似问题", "zhihu witness");
+  await expectVisible(page, "离职前应该做哪些准备？", "related question");
   const zhihuHref = await page.locator("#zhihuLink").getAttribute("href");
   assert(zhihuHref && zhihuHref.includes("zhihu.com/search"), `unexpected zhihu link: ${zhihuHref}`);
+  const relatedCount = await page.locator("#relatedQuestions a").count();
+  assert(relatedCount >= 3, `expected related questions, got ${relatedCount}`);
   const canvasBox = await page.locator("#shareCanvas").boundingBox();
   assert(canvasBox && canvasBox.width > 250 && canvasBox.height > 300, "share canvas should be visible");
   await page.getByRole("button", { name: "复制这句话" }).click();

@@ -514,6 +514,30 @@ h1 {
   line-height: 1.7;
 }
 
+.related-questions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.related-questions a {
+  border: 1.5px solid rgba(36, 40, 51, 0.64);
+  padding: 8px 10px;
+  background: var(--blue-soft);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.related-questions a:hover,
+.related-questions a:focus-visible {
+  border-color: var(--blue);
+  outline: none;
+}
+
 blockquote {
   max-width: 900px;
   margin: 34px 0 22px;
