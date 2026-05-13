@@ -22,6 +22,15 @@ async function answerCurrentRoute(page) {
   }
 }
 
+async function answerCurrentRouteWithOffset(page, offset) {
+  for (let step = 0; step < 3; step += 1) {
+    const options = page.locator(".option-button");
+    const count = await options.count();
+    assert(count >= 4, `expected at least 4 options, got ${count}`);
+    await options.nth((step + offset) % count).click();
+  }
+}
+
 async function run() {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   const context = await browser.newContext({
@@ -56,6 +65,10 @@ async function run() {
   assert(canvasBox && canvasBox.width > 250 && canvasBox.height > 300, "share canvas should be visible");
   await page.getByRole("button", { name: "复制这句话" }).click();
   await expectVisible(page, "已复制", "copy feedback");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "保存小卡片" }).click();
+  const download = await downloadPromise;
+  assert(download.suggestedFilename().endsWith(".png"), "share card should download as png");
 
   await page.getByRole("button", { name: "换个问题" }).click();
   await expectVisible(page, "我炒股能不能赚钱？", "home after result");
@@ -73,6 +86,29 @@ async function run() {
 
   await page.goto(`${BASE_URL}/?route=stock`);
   await expectVisible(page, "你最想从股市里拿到什么？", "route param");
+
+  const routes = [
+    "quit",
+    "reunion",
+    "breakup",
+    "career",
+    "startup",
+    "stock",
+    "effort",
+    "ordinary",
+    "city",
+    "please",
+  ];
+  for (const [index, route] of routes.entries()) {
+    await page.goto(`${BASE_URL}/?route=${route}`);
+    await page.locator(".option-button").first().waitFor({ state: "visible", timeout: 5000 });
+    await answerCurrentRouteWithOffset(page, index);
+    await expectVisible(page, "知乎相似问题", `${route} zhihu witness`);
+    const line = await page.locator("#finalLine").innerText();
+    assert(line.length >= 12, `${route} final line too short: ${line}`);
+    const href = await page.locator("#zhihuLink").getAttribute("href");
+    assert(href && href.includes("zhihu.com/search"), `${route} missing zhihu search link`);
+  }
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE_URL);
