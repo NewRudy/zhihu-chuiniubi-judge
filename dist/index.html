@@ -1862,7 +1862,8 @@ function drawShareCard() {
 }
 
 async function copyResult() {
-  const text = `${state.result.line}\n\n来自「知乎吹牛逼」`;
+  const appUrl = "https://newrudy.github.io/zhihu-chuiniubi-judge/";
+  const text = `${state.result.line}\n\n我在「知乎吹牛逼」问了：${state.result.title}\n${appUrl}`;
   try {
     await navigator.clipboard.writeText(text);
     $("#copyBtn").textContent = "已复制";

@@ -40,6 +40,12 @@ python3 -m http.server 5173
 
 打开 `http://localhost:5173`。
 
+## 在线演示
+
+```text
+https://newrudy.github.io/zhihu-chuiniubi-judge/
+```
+
 ## 本地自检
 
 ```bash
