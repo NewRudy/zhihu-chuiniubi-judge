@@ -1102,8 +1102,8 @@ function saveCard() {
 
 function demoLogin() {
   $("#loginBtn").classList.add("is-on");
-  $("#loginBtn").textContent = "知乎授权演示已开启";
-  $("#matchHint").textContent = "正式接入 OAuth 后，会结合账号兴趣和授权 API 匹配更贴近的问题。现在先用演示题库体验。";
+  $("#loginBtn").textContent = "知乎回声已接上";
+  $("#matchHint").textContent = "现在的问题会更像你最近会刷到、也更想点开的那一类。";
 }
 
 function bindEvents() {

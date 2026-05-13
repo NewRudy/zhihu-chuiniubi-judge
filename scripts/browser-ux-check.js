@@ -51,7 +51,7 @@ async function run() {
   await checkNoHorizontalOverflow(page, "desktop home");
 
   await page.getByRole("button", { name: "用知乎登录" }).click();
-  await expectVisible(page, "知乎授权演示已开启", "login demo");
+  await expectVisible(page, "知乎回声已接上", "login demo");
   await page.getByRole("button", { name: "随便替我问一个" }).click();
   await expectVisible(page, "匿名问题", "random route");
   await page.getByRole("button", { name: "返回星图" }).click();
