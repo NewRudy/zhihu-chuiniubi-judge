@@ -64,12 +64,14 @@ async function run() {
   await page.getByRole("button", { name: "下一局" }).click();
   await expectVisible(page, "第 2 局", "next round");
 
-  await page.goto(`${BASE_URL}/?mode=hot`);
+  await page.goto(BASE_URL);
+  await page.getByRole("button", { name: "打开今日案卷" }).click();
   await expectVisible(page, "本局热议问题", "hot mode");
   const hotStatus = await page.locator("#apiStatus").innerText();
   assert(hotStatus.includes("热榜") || hotStatus.includes("接口"), `unexpected hot status: ${hotStatus}`);
 
-  await page.goto(`${BASE_URL}/?mode=pitch`);
+  await page.goto(BASE_URL);
+  await page.getByRole("button", { name: "现场盲测" }).click();
   await expectVisible(page, "这三段里，哪段最像真洞察", "pitch mode");
 
   await page.goto(`${BASE_URL}/?result=1`);

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="700" viewBox="0 0 1260 700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061229"/>
+      <stop offset="0.45" stop-color="#102c64"/>
+      <stop offset="1" stop-color="#00a6ff"/>
+    </linearGradient>
+    <linearGradient id="hot" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffdd55"/>
+      <stop offset="0.45" stop-color="#ff4d8d"/>
+      <stop offset="1" stop-color="#47ffd2"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1260" height="700" rx="44" fill="url(#bg)"/>
+  <g opacity=".24" stroke="#b8e7ff" stroke-width="2">
+    <path d="M80 120h980M80 210h1100M80 300h980M80 390h1100M80 480h980"/>
+    <path d="M180 60v560M340 60v560M500 60v560M660 60v560M820 60v560M980 60v560"/>
+  </g>
+  <circle cx="1000" cy="188" r="144" fill="#00183a" opacity=".58"/>
+  <circle cx="1036" cy="160" r="64" fill="#47ffd2" opacity=".16"/>
+  <g filter="url(#glow)">
+    <text x="90" y="142" fill="#ffffff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="700">知乎吹牛逼</text>
+    <text x="90" y="282" fill="#ffffff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="102" font-weight="900">鉴定局</text>
+    <rect x="94" y="318" width="386" height="16" rx="8" fill="url(#hot)"/>
+  </g>
+  <text x="92" y="408" fill="#dff7ff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="34" font-weight="600">别急着点赞，先验货。</text>
+  <text x="94" y="468" fill="#a7c8e9" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="26">高赞回答 / AI 仿深刻 / 纯吹牛逼</text>
+  <text x="94" y="524" fill="#a7c8e9" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="26">三选一开庭，错了也很好笑。</text>
+  <g transform="translate(770 304)">
+    <rect x="0" y="0" width="360" height="176" rx="28" fill="#ffffff" opacity=".12"/>
+    <rect x="26" y="34" width="306" height="24" rx="12" fill="#47ffd2" opacity=".9"/>
+    <rect x="26" y="82" width="240" height="18" rx="9" fill="#ffffff" opacity=".74"/>
+    <rect x="26" y="122" width="288" height="18" rx="9" fill="#ffdd55" opacity=".84"/>
+  </g>
+  <text x="804" y="574" fill="#ffffff" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="32" font-weight="700">正确废话，当庭拆开。</text>
+</svg>

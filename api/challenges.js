@@ -58,6 +58,13 @@ function numberFrom(source, keys) {
   return 0;
 }
 
+function compactNumber(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number <= 0) return "";
+  if (number >= 10000) return `${(number / 10000).toFixed(number >= 100000 ? 0 : 1)} 万`;
+  return String(Math.round(number));
+}
+
 function pickList(payload) {
   if (Array.isArray(payload)) return payload;
   const candidates = [
@@ -114,6 +121,20 @@ function questionTitle(item) {
   );
 }
 
+function hotStats(item) {
+  const source = item?.question || item?.target || item;
+  const heat = numberFrom(item, ["heat", "hot_score", "hotScore", "score", "rank_score", "trend"]);
+  const followers = numberFrom(source, ["follower_count", "followers", "follow_count"]);
+  const answers = numberFrom(source, ["answer_count", "answers_count", "answerCount"]);
+  const comments = numberFrom(source, ["comment_count", "comments_count", "commentCount"]);
+  return [
+    heat && `热度 ${compactNumber(heat)}`,
+    answers && `回答 ${compactNumber(answers)}`,
+    followers && `关注 ${compactNumber(followers)}`,
+    comments && `评论 ${compactNumber(comments)}`,
+  ].filter(Boolean);
+}
+
 function answerText(answer) {
   if (typeof answer === "string") return cleanText(answer);
   return firstText(answer, ["content", "excerpt", "text", "summary", "answer", "body"]);
@@ -156,6 +177,7 @@ function syntheticBluffAnswer(title) {
 
 function buildRound(item) {
   const title = questionTitle(item) || "一个值得讨论的问题";
+  const stats = hotStats(item);
   const rawAnswers = pickAnswers(item);
   const normalizedAnswers = rawAnswers
     .map((answer, index) => normalizeProvidedAnswer(answer, index === 0 ? "human" : "ai", title))
@@ -185,8 +207,13 @@ function buildRound(item) {
   return {
     question: title,
     hook:
-      firstText(item, ["hook", "excerpt", "description"], "") ||
-      "这一题混入了热榜问题和高赞表达痕迹，别被漂亮结构带跑。",
+      [
+        firstText(item, ["hook", "excerpt", "description"], ""),
+        stats.length ? `案卷统计：${stats.join(" · ")}。` : "",
+        "这一题混入了热榜问题和高赞表达痕迹，别被漂亮结构带跑。",
+      ]
+        .filter(Boolean)
+        .join(" "),
     answers,
   };
 }
