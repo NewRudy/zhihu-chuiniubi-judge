@@ -1490,7 +1490,7 @@ const sharedTopic = bootParams.get("topic");
 if (sharedTopic) {
   $("#topicInput").value = sharedTopic;
   createChallenge(sharedTopic);
-} else if (bootParams.get("result") === "1") {
+} else if (bootParams.get("result") === "1" || bootParams.get("mode") === "result") {
   showDemoResult();
 } else if (bootParams.get("mode") === "pitch") {
   pitchMode();

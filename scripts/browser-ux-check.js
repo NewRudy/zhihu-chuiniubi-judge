@@ -70,9 +70,15 @@ async function run() {
   const hotStatus = await page.locator("#apiStatus").innerText();
   assert(hotStatus.includes("热榜") || hotStatus.includes("接口"), `unexpected hot status: ${hotStatus}`);
 
+  await page.goto(`${BASE_URL}/?mode=hot`);
+  await expectVisible(page, "本局热议问题", "hot mode boot param");
+
   await page.goto(BASE_URL);
   await page.getByRole("button", { name: "现场盲测" }).click();
   await expectVisible(page, "这三段里，哪段最像真洞察", "pitch mode");
+
+  await page.goto(`${BASE_URL}/?mode=pitch`);
+  await expectVisible(page, "这三段里，哪段最像真洞察", "pitch mode boot param");
 
   await page.goto(`${BASE_URL}/?result=1`);
   await expectVisible(page, "鉴定完成", "result hero");
@@ -83,6 +89,9 @@ async function run() {
   await page.getByRole("button", { name: "复制挑战文案" }).click();
   await expectVisible(page, "已复制", "copy feedback");
 
+  await page.goto(`${BASE_URL}/?mode=result`);
+  await expectVisible(page, "鉴定完成", "result mode boot param");
+
   await page.goto(BASE_URL);
   const topic = "年轻人为什么讨厌装懂式建议？";
   await page.getByLabel("丢一个话题，现场伪造三段“很懂”的回答").fill(topic);
@@ -92,6 +101,10 @@ async function run() {
   await expectVisible(page, "已生成挑战局", "custom challenge feedback");
   const href = await page.locator("#challengeLink").getAttribute("href");
   assert(href && href.includes(encodeURIComponent(topic)), "challenge link should carry topic");
+
+  await page.goto(`${BASE_URL}/?topic=${encodeURIComponent(topic)}`);
+  const bootTopicQuestion = await page.locator("#questionText").innerText();
+  assert(bootTopicQuestion === topic, `topic boot param mismatch: ${bootTopicQuestion}`);
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE_URL);

@@ -52,5 +52,6 @@ bash scripts/smoke-test.sh
 
 - `?mode=pitch`：直接进入评委演示局
 - `?mode=hot`：直接进入热榜实验室
+- `?mode=result`：直接展示结果卡
 - `?result=1`：直接展示结果卡和创作者灵感转化
 - `?topic=你的话题`：生成朋友挑战局
