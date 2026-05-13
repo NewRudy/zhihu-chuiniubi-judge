@@ -37,3 +37,16 @@ python3 -m http.server 5173
 ```bash
 bash scripts/package-submission.sh
 ```
+
+本地自检：
+
+```bash
+bash scripts/smoke-test.sh
+```
+
+路演快捷参数：
+
+- `?mode=pitch`：直接进入评委演示局
+- `?mode=hot`：直接进入热榜实验室
+- `?result=1`：直接展示结果卡和创作者灵感转化
+- `?topic=你的话题`：生成朋友挑战局

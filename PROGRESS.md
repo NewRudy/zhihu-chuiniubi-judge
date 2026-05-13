@@ -172,3 +172,33 @@
 
 - 验证 `api/challenges.js` 在本地 Node 环境下的 fallback 响应
 - 授权到位后优先使用 Vercel 或 GitHub Pages 发布；如果有 token，优先 Vercel
+
+## 2026-05-12 17:20 America/Los_Angeles
+
+已完成：
+
+- 检查本地 Git、`gh` 登录状态、GitHub 远程仓库状态和提交包状态
+- 搜索公开网页，仍未找到官方飞书 API 文档正文镜像
+- 新增首页「直接看结果卡」按钮
+- 新增路演快捷参数：`?mode=pitch`、`?mode=hot`、`?mode=demo`、`?result=1`
+- 新增 `scripts/smoke-test.sh` 一键自检脚本
+- 更新 README 和路演文档
+
+验证：
+
+- `node --check script.js` 通过
+- `node --check api/challenges.js` 通过
+- API fallback 返回正常
+- 构建、HTTP 访问、提交包生成均纳入 smoke test
+
+阻塞：
+
+- `gh` 仍未登录
+- `NewRudy/zhihu-chuiniubi-judge` 仍不存在
+- 官方 API 文档正文仍不可访问
+
+下一步：
+
+- 运行完整 smoke test 并提交
+- 如果 GitHub 授权到位，立即发布
+- 如果官方 API 文档到位，替换代理里的占位 `/hot` 映射

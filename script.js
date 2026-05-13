@@ -347,6 +347,19 @@ function renderResult() {
   drawShareCard(index, persona.title, weakness, correct);
 }
 
+function showDemoResult() {
+  rounds = [...BASE_ROUNDS];
+  resetScore();
+  correct = 12;
+  totalAnswered = 15;
+  lures = { 三层结构: 2, 宏大词: 1 };
+  introPanel.classList.add("hidden");
+  gamePanel.classList.add("hidden");
+  resultPanel.classList.remove("hidden");
+  $("#apiStatus").textContent = "结果卡演示模式已开启：用于路演快速展示传播与创作者转化。";
+  renderResult();
+}
+
 function renderCreatorInsight(index, title, weakness) {
   const insightMap = {
     三层结构: {
@@ -521,6 +534,7 @@ function pitchMode() {
 $("#startBtn").addEventListener("click", () => startGame("shuffle"));
 $("#hotBtn").addEventListener("click", () => startGame("hot"));
 $("#demoBtn").addEventListener("click", () => startGame("demo"));
+$("#resultDemoBtn").addEventListener("click", showDemoResult);
 $("#pitchBtn").addEventListener("click", pitchMode);
 $("#revealBtn").addEventListener("click", revealRound);
 $("#restartBtn").addEventListener("click", () => startGame("shuffle"));
@@ -541,8 +555,17 @@ $("#creatorForm").addEventListener("submit", (event) => {
   createChallenge($("#topicInput").value);
 });
 
-const sharedTopic = new URLSearchParams(location.search).get("topic");
+const bootParams = new URLSearchParams(location.search);
+const sharedTopic = bootParams.get("topic");
 if (sharedTopic) {
   $("#topicInput").value = sharedTopic;
   createChallenge(sharedTopic);
+} else if (bootParams.get("result") === "1") {
+  showDemoResult();
+} else if (bootParams.get("mode") === "pitch") {
+  pitchMode();
+} else if (bootParams.get("mode") === "hot") {
+  startGame("hot");
+} else if (bootParams.get("mode") === "demo") {
+  startGame("demo");
 }
