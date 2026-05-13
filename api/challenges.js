@@ -34,26 +34,66 @@ function json(response, status = 200) {
 }
 
 function cleanText(value, fallback = "") {
-  return String(value || fallback)
+  return String(value ?? fallback)
     .replace(htmlTagPattern, "")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, "\"")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function firstText(source, keys, fallback = "") {
-  for (const key of keys) {
-    const value = source?.[key];
-    if (typeof value === "string" && value.trim()) return cleanText(value);
+function getPath(source, path) {
+  return String(path)
+    .split(".")
+    .reduce((value, key) => (value == null ? undefined : value[key]), source);
+}
+
+function textValue(value, fallback = "") {
+  if (typeof value === "string" || typeof value === "number") return cleanText(value, fallback);
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const text = textValue(item);
+      if (text) return text;
+    }
+  }
+  if (value && typeof value === "object") {
+    for (const key of ["text", "plain_text", "plainText", "content", "excerpt", "summary", "title", "name", "value", "html"]) {
+      const text = textValue(value[key]);
+      if (text) return text;
+    }
   }
   return fallback;
 }
 
+function firstText(source, keys, fallback = "") {
+  for (const key of keys) {
+    const value = getPath(source, key);
+    const text = textValue(value);
+    if (text) return text;
+  }
+  return fallback;
+}
+
+function parseNumber(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const text = textValue(value).replace(/,/g, "");
+  const match = text.match(/(\d+(?:\.\d+)?)\s*([万亿kK]?)/);
+  if (!match) return 0;
+  const base = Number(match[1]);
+  if (!Number.isFinite(base)) return 0;
+  if (match[2] === "亿") return base * 100000000;
+  if (match[2] === "万") return base * 10000;
+  if (match[2].toLowerCase() === "k") return base * 1000;
+  return base;
+}
+
 function numberFrom(source, keys) {
   for (const key of keys) {
-    const value = Number(source?.[key]);
-    if (Number.isFinite(value)) return value;
+    const value = parseNumber(getPath(source, key));
+    if (value) return value;
   }
   return 0;
 }
@@ -67,10 +107,23 @@ function compactNumber(value) {
 
 function pickList(payload) {
   if (Array.isArray(payload)) return payload;
+  const listFrom = (value) => {
+    if (Array.isArray(value)) return value;
+    if (Array.isArray(value?.data)) return value.data;
+    if (Array.isArray(value?.items)) return value.items;
+    if (Array.isArray(value?.list)) return value.list;
+    if (Array.isArray(value?.records)) return value.records;
+    return null;
+  };
   const candidates = [
     payload?.questions,
     payload?.data?.questions,
     payload?.data?.items,
+    payload?.data?.list,
+    payload?.data?.records,
+    payload?.data?.hot_list,
+    payload?.data?.result?.items,
+    payload?.data?.result?.list,
     payload?.data,
     payload?.items,
     payload?.hot,
@@ -79,9 +132,10 @@ function pickList(payload) {
     payload?.records,
     payload?.result?.questions,
     payload?.result?.items,
+    payload?.result?.list,
     payload?.result,
   ];
-  return candidates.find(Array.isArray) || [];
+  return candidates.map(listFrom).find(Boolean) || [];
 }
 
 function pickAnswers(item) {
@@ -93,6 +147,9 @@ function pickAnswers(item) {
     item.answerList,
     item?.question?.answers,
     item?.target?.answers,
+    item?.target?.question?.answers,
+    item?.answers?.data,
+    item?.answers?.items,
   ];
   const list = candidates.find(Array.isArray) || [];
   return [...list].sort(
@@ -108,25 +165,39 @@ function questionId(item) {
     item.questionId ||
     item.id ||
     item?.question?.id ||
+    item?.question?.question_id ||
+    item?.target?.question_id ||
     item?.target?.id ||
-    item?.target?.question?.id
+    item?.target?.question?.id ||
+    item?.target?.question?.question_id
   );
 }
 
 function questionTitle(item) {
   return firstText(
     item,
-    ["title", "question", "name"],
-    firstText(item?.question || item?.target || item?.target?.question, ["title", "question", "name"])
+    [
+      "title",
+      "question",
+      "name",
+      "title_area.text",
+      "titleArea.text",
+      "target.title",
+      "target.question.title",
+      "target.title_area.text",
+      "target.question.title_area.text",
+      "question.title",
+    ],
+    firstText(item?.question || item?.target || item?.target?.question, ["title", "question", "name", "title_area.text"])
   );
 }
 
 function hotStats(item) {
-  const source = item?.question || item?.target || item;
-  const heat = numberFrom(item, ["heat", "hot_score", "hotScore", "score", "rank_score", "trend"]);
-  const followers = numberFrom(source, ["follower_count", "followers", "follow_count"]);
-  const answers = numberFrom(source, ["answer_count", "answers_count", "answerCount"]);
-  const comments = numberFrom(source, ["comment_count", "comments_count", "commentCount"]);
+  const source = item?.target?.question || item?.question || item?.target || item;
+  const heat = numberFrom(item, ["heat", "hot_score", "hotScore", "score", "rank_score", "trend", "metrics_area.text"]);
+  const followers = numberFrom(source, ["follower_count", "followers", "follow_count", "metrics.followers"]);
+  const answers = numberFrom(source, ["answer_count", "answers_count", "answerCount", "metrics.answers"]);
+  const comments = numberFrom(source, ["comment_count", "comments_count", "commentCount", "metrics.comments"]);
   return [
     heat && `热度 ${compactNumber(heat)}`,
     answers && `回答 ${compactNumber(answers)}`,
@@ -137,14 +208,27 @@ function hotStats(item) {
 
 function answerText(answer) {
   if (typeof answer === "string") return cleanText(answer);
-  return firstText(answer, ["content", "excerpt", "text", "summary", "answer", "body"]);
+  return firstText(answer, [
+    "content",
+    "content.text",
+    "excerpt",
+    "excerpt.text",
+    "text",
+    "summary",
+    "answer",
+    "body",
+    "target.content",
+    "target.content.text",
+    "target.excerpt",
+  ]);
 }
 
 function normalizeProvidedAnswer(answer, fallbackKind, title) {
   const text = answerText(answer);
   if (!text) return null;
-  const kind = answer.kind || answer.type || fallbackKind;
-  const votes = numberFrom(answer, ["voteup_count", "upvote_count", "like_count", "likes", "vote_count"]);
+  const rawKind = answer.kind || answer.type || fallbackKind;
+  const kind = ["human", "ai", "bluff"].includes(rawKind) ? rawKind : fallbackKind;
+  const votes = numberFrom(answer, ["voteup_count", "upvote_count", "like_count", "likes", "vote_count", "target.voteup_count"]);
   return {
     kind,
     lure: answer.lure || answer.label || (kind === "human" ? "高赞痕迹" : "可疑话术"),
