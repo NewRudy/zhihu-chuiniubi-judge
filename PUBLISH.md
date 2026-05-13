@@ -17,6 +17,17 @@
 bash scripts/publish-github.sh
 ```
 
+## 如果 GitHub CLI 登录不稳定
+
+创建一个临时 GitHub token，权限选择 `repo` 和 `workflow`，然后在本机执行：
+
+```bash
+GH_TOKEN=你的临时token bash scripts/publish-with-token.sh
+```
+
+这个脚本不会把 token 写入 `origin`，只会在本次 `git push` 使用临时
+HTTP header。推送完成后可以立刻到 GitHub 设置页撤销该 token。
+
 预期产物：
 
 - 仓库：`https://github.com/NewRudy/zhihu-chuiniubi-judge`
