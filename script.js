@@ -7,7 +7,7 @@ const subtitles = [
   "有些选择，不是想明白的，是忽然认出来的。",
 ];
 
-const colors = ["#b8f05e", "#ffd166", "#9af5d0", "#ff9fb5", "#b8d7ff", "#fffdf6"];
+const colors = ["#e8f1ff", "#f3dfb2", "#dfe8d1", "#f2d6d9", "#e7e2d7", "#fffdf7"];
 
 const bubbles = [
   ["要不要裸辞？", "quit"],
@@ -924,36 +924,32 @@ function drawShareCard() {
   const ctx = canvas.getContext("2d");
   const result = state.result;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#f7f3e8";
+  ctx.fillStyle = "#f4f0e6";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#1478ff";
+  ctx.fillStyle = "#1677ff";
   ctx.fillRect(68, 68, 944, 126);
   ctx.fillStyle = "#fffdf6";
   ctx.font = "900 56px sans-serif";
   ctx.fillText("知乎吹牛逼", 108, 150);
-  ctx.fillStyle = "#171512";
-  ctx.strokeStyle = "#27231d";
-  ctx.lineWidth = 6;
+  ctx.fillStyle = "#17191f";
+  ctx.strokeStyle = "#242833";
+  ctx.lineWidth = 5;
   ctx.strokeRect(68, 238, 944, 1040);
-  ctx.fillStyle = "#fffdf6";
+  ctx.fillStyle = "#fffdf7";
   ctx.fillRect(68, 238, 944, 1040);
-  ctx.fillStyle = "#ff6f91";
-  ctx.beginPath();
-  ctx.arc(880, 330, 110, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#b8f05e";
-  ctx.beginPath();
-  ctx.arc(166, 1100, 120, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#171512";
+  ctx.fillStyle = "#e8f1ff";
+  ctx.fillRect(820, 276, 132, 132);
+  ctx.fillStyle = "#dfe8d1";
+  ctx.fillRect(116, 1072, 152, 92);
+  ctx.fillStyle = "#17191f";
   ctx.font = "900 42px sans-serif";
   drawWrapped(ctx, `我问：${result.title}`, 118, 350, 760, 58, 3);
   ctx.font = "900 72px sans-serif";
   const nextY = drawWrapped(ctx, result.line, 118, 555, 820, 90, 6);
   ctx.font = "500 34px sans-serif";
-  ctx.fillStyle = "#6f675b";
+  ctx.fillStyle = "#6d6a62";
   drawWrapped(ctx, result.deep, 118, Math.max(nextY + 80, 940), 800, 50, 4);
-  ctx.fillStyle = "#171512";
+  ctx.fillStyle = "#17191f";
   ctx.font = "900 28px sans-serif";
   ctx.fillText("问一句，借一口气。", 118, 1210);
 }

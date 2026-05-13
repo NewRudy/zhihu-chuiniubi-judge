@@ -11,17 +11,19 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23191815%22/%3E%0A%20%20%3Crect%20x%3D%229%22%20y%3D%229%22%20width%3D%2246%22%20height%3D%2246%22%20fill%3D%22%23c8ff3d%22%20stroke%3D%22%23fffaf0%22%20stroke-width%3D%224%22/%3E%0A%20%20%3Cpath%20d%3D%22M20%2022h24v7H20zm0%2013h16v7H20z%22%20fill%3D%22%23191815%22/%3E%0A%3C/svg%3E%0A" type="image/svg+xml" />
     <style>
 :root {
-  --paper: #f7f3e8;
-  --ink: #171512;
-  --muted: #6f675b;
-  --line: #27231d;
-  --blue: #1478ff;
-  --green: #b8f05e;
-  --pink: #ff6f91;
-  --amber: #ffd166;
-  --mint: #9af5d0;
-  --white: #fffdf6;
-  --shadow: 0 28px 90px rgba(23, 21, 18, 0.18);
+  --paper: #f4f0e6;
+  --ink: #17191f;
+  --muted: #6d6a62;
+  --line: #242833;
+  --blue: #1677ff;
+  --blue-soft: #e8f1ff;
+  --sage: #dfe8d1;
+  --rose: #f2d6d9;
+  --amber: #f3dfb2;
+  --mist: #e7e2d7;
+  --white: #fffdf7;
+  --shadow: 0 28px 80px rgba(36, 40, 51, 0.14);
+  --soft-shadow: 0 12px 34px rgba(36, 40, 51, 0.1);
 }
 
 * {
@@ -38,13 +40,13 @@ body {
   margin: 0;
   color: var(--ink);
   background:
-    radial-gradient(circle at 18% 18%, rgba(20, 120, 255, 0.18), transparent 26vw),
-    radial-gradient(circle at 78% 24%, rgba(255, 111, 145, 0.16), transparent 24vw),
-    radial-gradient(circle at 52% 86%, rgba(184, 240, 94, 0.18), transparent 22vw),
-    linear-gradient(90deg, rgba(23, 21, 18, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(23, 21, 18, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 18% 20%, rgba(22, 119, 255, 0.1), transparent 30vw),
+    radial-gradient(circle at 84% 28%, rgba(242, 214, 217, 0.52), transparent 24vw),
+    radial-gradient(circle at 50% 92%, rgba(223, 232, 209, 0.58), transparent 26vw),
+    linear-gradient(90deg, rgba(36, 40, 51, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(36, 40, 51, 0.035) 1px, transparent 1px),
     var(--paper);
-  background-size: auto, auto, auto, 34px 34px, 34px 34px, auto;
+  background-size: auto, auto, auto, 36px 36px, 36px 36px, auto;
   font-family:
     ui-sans-serif,
     -apple-system,
@@ -73,17 +75,17 @@ a {
 }
 
 .app-shell {
-  width: min(1500px, calc(100vw - 28px));
-  min-height: calc(100vh - 28px);
-  margin: 14px auto;
+  width: min(1480px, calc(100vw - 32px));
+  min-height: calc(100vh - 32px);
+  margin: 16px auto;
 }
 
 .hero,
 .play-view,
 .result-view {
   min-height: calc(100vh - 28px);
-  border: 2px solid var(--line);
-  background: rgba(255, 253, 246, 0.82);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
+  background: rgba(255, 253, 247, 0.86);
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -94,7 +96,9 @@ a {
   justify-content: space-between;
   gap: 16px;
   padding: 20px clamp(18px, 3vw, 38px);
-  border-bottom: 2px solid var(--line);
+  border-bottom: 1.5px solid rgba(36, 40, 51, 0.82);
+  background: rgba(255, 253, 247, 0.72);
+  backdrop-filter: blur(12px);
 }
 
 .brand-mark {
@@ -110,9 +114,9 @@ a {
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 2px solid var(--line);
+  border: 1.5px solid var(--line);
   background: var(--blue);
-  box-shadow: 5px 5px 0 var(--line);
+  box-shadow: 4px 4px 0 rgba(36, 40, 51, 0.92);
 }
 
 .brand-mark strong {
@@ -125,12 +129,12 @@ a {
 .primary-button,
 .ghost-button {
   min-height: 46px;
-  border: 2px solid var(--line);
+  border: 1.5px solid var(--line);
   padding: 11px 17px;
   background: var(--white);
   color: var(--ink);
   font-weight: 900;
-  box-shadow: 5px 5px 0 var(--line);
+  box-shadow: 4px 4px 0 rgba(36, 40, 51, 0.94);
   transition:
     transform 150ms ease,
     box-shadow 150ms ease,
@@ -138,7 +142,8 @@ a {
 }
 
 .primary-button {
-  background: var(--green);
+  background: var(--blue);
+  color: var(--white);
 }
 
 .ghost-button {
@@ -151,7 +156,7 @@ a {
 }
 
 .login-button.is-on {
-  background: var(--blue);
+  background: #275fbd;
 }
 
 .back-button:hover,
@@ -159,7 +164,7 @@ a {
 .ghost-button:hover,
 .login-button:hover {
   transform: translate(3px, 3px);
-  box-shadow: 2px 2px 0 var(--line);
+  box-shadow: 1px 1px 0 var(--line);
 }
 
 .hero {
@@ -178,7 +183,7 @@ a {
   margin: 0 0 10px;
   color: var(--blue);
   font-size: 13px;
-  font-weight: 1000;
+  font-weight: 900;
   letter-spacing: 0;
 }
 
@@ -192,8 +197,8 @@ blockquote {
 
 h1 {
   margin-bottom: 18px;
-  font-size: clamp(46px, 8vw, 116px);
-  line-height: 0.88;
+  font-size: clamp(44px, 7.2vw, 104px);
+  line-height: 0.94;
   letter-spacing: 0;
 }
 
@@ -202,7 +207,7 @@ h1 {
   margin-bottom: 0;
   color: var(--muted);
   font-size: clamp(18px, 2.2vw, 28px);
-  font-weight: 800;
+  font-weight: 760;
   line-height: 1.35;
 }
 
@@ -219,15 +224,15 @@ h1 {
   top: var(--y);
   max-width: min(280px, 42vw);
   min-height: 54px;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
   border-radius: 999px;
   padding: 12px 18px;
   background: var(--bubble);
   color: var(--ink);
-  font-weight: 900;
+  font-weight: 850;
   line-height: 1.28;
   text-align: center;
-  box-shadow: 6px 6px 0 var(--line);
+  box-shadow: 0 10px 26px rgba(36, 40, 51, 0.12);
   transform: translate(-50%, -50%) rotate(var(--r));
   animation: floaty var(--speed) ease-in-out infinite alternate;
 }
@@ -236,7 +241,9 @@ h1 {
 .question-bubble:focus-visible {
   z-index: 5;
   outline: none;
-  transform: translate(-50%, -50%) rotate(0deg) scale(1.08);
+  border-color: var(--blue);
+  box-shadow: 0 14px 34px rgba(22, 119, 255, 0.16);
+  transform: translate(-50%, -50%) rotate(0deg) scale(1.06);
 }
 
 @keyframes floaty {
@@ -255,10 +262,11 @@ h1 {
   left: clamp(16px, 4vw, 44px);
   display: grid;
   gap: 10px;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.88);
   padding: 16px;
   background: rgba(255, 253, 246, 0.94);
-  box-shadow: 8px 8px 0 var(--line);
+  box-shadow: var(--soft-shadow);
+  backdrop-filter: blur(14px);
 }
 
 .ask-box label {
@@ -275,7 +283,7 @@ h1 {
 .ask-line input {
   min-width: 0;
   min-height: 52px;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
   padding: 0 15px;
   background: var(--white);
   color: var(--ink);
@@ -310,9 +318,9 @@ h1 {
 .choice-stage,
 .answer-card,
 .share-lab {
-  border: 2px solid var(--line);
-  background: rgba(255, 253, 246, 0.9);
-  box-shadow: 8px 8px 0 var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
+  background: rgba(255, 253, 247, 0.9);
+  box-shadow: var(--soft-shadow);
 }
 
 .case-file {
@@ -322,7 +330,7 @@ h1 {
 .case-file h2 {
   margin-bottom: 12px;
   font-size: clamp(30px, 4vw, 52px);
-  line-height: 0.98;
+  line-height: 1.04;
 }
 
 .case-file p {
@@ -338,9 +346,9 @@ h1 {
 }
 
 .route-tags span {
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.82);
   padding: 6px 10px;
-  background: var(--amber);
+  background: var(--blue-soft);
   color: var(--ink);
   font-size: 13px;
   font-weight: 900;
@@ -355,7 +363,7 @@ h1 {
 
 .progress-track {
   height: 14px;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.82);
   background: var(--white);
 }
 
@@ -363,7 +371,7 @@ h1 {
   display: block;
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--blue), var(--pink), var(--green));
+  background: linear-gradient(90deg, var(--blue), #8aa8d8, var(--sage));
   transition: width 180ms ease;
 }
 
@@ -375,8 +383,8 @@ h1 {
 .choice-stage h3 {
   max-width: 900px;
   margin: 10px 0 26px;
-  font-size: clamp(32px, 5vw, 72px);
-  line-height: 0.98;
+  font-size: clamp(32px, 4.6vw, 64px);
+  line-height: 1.04;
 }
 
 .option-grid {
@@ -389,12 +397,12 @@ h1 {
   display: grid;
   align-content: start;
   min-height: 118px;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
   padding: 18px;
   background: var(--option);
   color: var(--ink);
   text-align: left;
-  box-shadow: 6px 6px 0 var(--line);
+  box-shadow: 0 10px 24px rgba(36, 40, 51, 0.1);
   transition:
     transform 140ms ease,
     box-shadow 140ms ease;
@@ -404,7 +412,8 @@ h1 {
 .option-button:focus-visible {
   outline: none;
   transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 var(--line);
+  border-color: var(--blue);
+  box-shadow: 0 12px 28px rgba(22, 119, 255, 0.14);
 }
 
 .option-button strong {
@@ -430,9 +439,9 @@ h1 {
   min-height: 720px;
   padding: clamp(24px, 5vw, 58px);
   background:
-    radial-gradient(circle at 100% 0, rgba(184, 240, 94, 0.38), transparent 260px),
-    radial-gradient(circle at 0 100%, rgba(20, 120, 255, 0.22), transparent 320px),
-    rgba(255, 253, 246, 0.94);
+    linear-gradient(135deg, rgba(232, 241, 255, 0.72), transparent 34%),
+    radial-gradient(circle at 100% 0, rgba(223, 232, 209, 0.55), transparent 300px),
+    rgba(255, 253, 247, 0.96);
 }
 
 .answer-card h2 {
@@ -456,7 +465,7 @@ h1 {
   gap: 10px;
   max-width: 880px;
   margin: 28px 0;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
   padding: 18px;
   background: var(--white);
 }
@@ -508,7 +517,7 @@ blockquote {
 #shareCanvas {
   width: 100%;
   aspect-ratio: 3 / 4;
-  border: 2px solid var(--line);
+  border: 1.5px solid rgba(36, 40, 51, 0.86);
   background: var(--paper);
 }
 
@@ -765,7 +774,7 @@ const subtitles = [
   "有些选择，不是想明白的，是忽然认出来的。",
 ];
 
-const colors = ["#b8f05e", "#ffd166", "#9af5d0", "#ff9fb5", "#b8d7ff", "#fffdf6"];
+const colors = ["#e8f1ff", "#f3dfb2", "#dfe8d1", "#f2d6d9", "#e7e2d7", "#fffdf7"];
 
 const bubbles = [
   ["要不要裸辞？", "quit"],
@@ -1682,36 +1691,32 @@ function drawShareCard() {
   const ctx = canvas.getContext("2d");
   const result = state.result;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#f7f3e8";
+  ctx.fillStyle = "#f4f0e6";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#1478ff";
+  ctx.fillStyle = "#1677ff";
   ctx.fillRect(68, 68, 944, 126);
   ctx.fillStyle = "#fffdf6";
   ctx.font = "900 56px sans-serif";
   ctx.fillText("知乎吹牛逼", 108, 150);
-  ctx.fillStyle = "#171512";
-  ctx.strokeStyle = "#27231d";
-  ctx.lineWidth = 6;
+  ctx.fillStyle = "#17191f";
+  ctx.strokeStyle = "#242833";
+  ctx.lineWidth = 5;
   ctx.strokeRect(68, 238, 944, 1040);
-  ctx.fillStyle = "#fffdf6";
+  ctx.fillStyle = "#fffdf7";
   ctx.fillRect(68, 238, 944, 1040);
-  ctx.fillStyle = "#ff6f91";
-  ctx.beginPath();
-  ctx.arc(880, 330, 110, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#b8f05e";
-  ctx.beginPath();
-  ctx.arc(166, 1100, 120, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#171512";
+  ctx.fillStyle = "#e8f1ff";
+  ctx.fillRect(820, 276, 132, 132);
+  ctx.fillStyle = "#dfe8d1";
+  ctx.fillRect(116, 1072, 152, 92);
+  ctx.fillStyle = "#17191f";
   ctx.font = "900 42px sans-serif";
   drawWrapped(ctx, `我问：${result.title}`, 118, 350, 760, 58, 3);
   ctx.font = "900 72px sans-serif";
   const nextY = drawWrapped(ctx, result.line, 118, 555, 820, 90, 6);
   ctx.font = "500 34px sans-serif";
-  ctx.fillStyle = "#6f675b";
+  ctx.fillStyle = "#6d6a62";
   drawWrapped(ctx, result.deep, 118, Math.max(nextY + 80, 940), 800, 50, 4);
-  ctx.fillStyle = "#171512";
+  ctx.fillStyle = "#17191f";
   ctx.font = "900 28px sans-serif";
   ctx.fillText("问一句，借一口气。", 118, 1210);
 }
