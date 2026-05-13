@@ -925,6 +925,12 @@ function startRoute(routeId, label = "") {
   setView("play");
 }
 
+function randomRoute() {
+  const [label, routeId] = bubbles[Math.floor(Math.random() * bubbles.length)];
+  $("#matchHint").textContent = `替你捞到一个问题：「${label}」`;
+  startRoute(routeId, label);
+}
+
 function renderStep() {
   const route = state.route;
   const question = route.questions[state.step];
@@ -1112,6 +1118,7 @@ function bindEvents() {
   $("#backBtn").addEventListener("click", () => setView("home"));
   $("#resultBackBtn").addEventListener("click", () => setView("home"));
   $("#againBtn").addEventListener("click", () => setView("home"));
+  $("#randomBtn").addEventListener("click", randomRoute);
   $("#moreLineBtn").addEventListener("click", moreLine);
   $("#copyBtn").addEventListener("click", copyResult);
   $("#saveCardBtn").addEventListener("click", saveCard);

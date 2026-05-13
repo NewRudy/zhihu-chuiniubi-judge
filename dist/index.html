@@ -274,6 +274,29 @@ h1 {
   font-weight: 1000;
 }
 
+.ask-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.random-button {
+  min-height: 34px;
+  border: 1.5px solid rgba(36, 40, 51, 0.8);
+  padding: 7px 11px;
+  background: var(--blue-soft);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.random-button:hover,
+.random-button:focus-visible {
+  border-color: var(--blue);
+  outline: none;
+}
+
 .ask-line {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -657,6 +680,11 @@ blockquote {
     grid-template-columns: 1fr;
   }
 
+  .ask-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .choice-stage h3 {
     font-size: clamp(34px, 11vw, 54px);
   }
@@ -684,7 +712,10 @@ blockquote {
         <section class="question-sky" id="questionSky" aria-label="问题星图"></section>
 
         <form class="ask-box" id="customForm">
-          <label for="customQuestion">没有你的问题？自己问一句。</label>
+          <div class="ask-head">
+            <label for="customQuestion">没有你的问题？自己问一句。</label>
+            <button class="random-button" id="randomBtn" type="button">随便替我问一个</button>
+          </div>
           <div class="ask-line">
             <input
               id="customQuestion"
@@ -1760,6 +1791,12 @@ function startRoute(routeId, label = "") {
   setView("play");
 }
 
+function randomRoute() {
+  const [label, routeId] = bubbles[Math.floor(Math.random() * bubbles.length)];
+  $("#matchHint").textContent = `替你捞到一个问题：「${label}」`;
+  startRoute(routeId, label);
+}
+
 function renderStep() {
   const route = state.route;
   const question = route.questions[state.step];
@@ -1947,6 +1984,7 @@ function bindEvents() {
   $("#backBtn").addEventListener("click", () => setView("home"));
   $("#resultBackBtn").addEventListener("click", () => setView("home"));
   $("#againBtn").addEventListener("click", () => setView("home"));
+  $("#randomBtn").addEventListener("click", randomRoute);
   $("#moreLineBtn").addEventListener("click", moreLine);
   $("#copyBtn").addEventListener("click", copyResult);
   $("#saveCardBtn").addEventListener("click", saveCard);
