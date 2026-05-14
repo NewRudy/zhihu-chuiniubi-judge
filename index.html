@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="知乎吹牛逼：从一个真实想问的问题出发，找到与你站在同一边的知乎回声。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="知乎吹牛逼" />
+    <meta
+      property="og:description"
+      content="问一句，借一口气。从一个真实想问的问题出发，找到与你站在同一边的知乎高赞回声。"
+    />
+    <meta property="og:url" content="https://newrudy.github.io/zhihu-chuiniubi-judge/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="知乎吹牛逼" />
+    <meta
+      name="twitter:description"
+      content="问一句，借一口气。从一个真实想问的问题出发，找到与你站在同一边的知乎高赞回声。"
+    />
+    <link rel="canonical" href="https://newrudy.github.io/zhihu-chuiniubi-judge/" />
+    <title>知乎吹牛逼</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" id="homeView">
+        <nav class="topbar" aria-label="顶部导航">
+          <div class="brand-mark">
+            <span>知乎</span>
+            <strong>吹牛逼</strong>
+          </div>
+          <button class="login-button" id="loginBtn" type="button">用知乎登录</button>
+        </nav>
+
+        <div class="hero-copy">
+          <p class="kicker">问一句，借一口气。</p>
+          <h1>今天，你想把哪个问题丢给知乎？</h1>
+          <p class="subtitle" id="subtitleText">有些答案，会先在心里排队。</p>
+        </div>
+
+        <section class="question-sky" id="questionSky" aria-label="问题星图"></section>
+
+        <form class="ask-box" id="customForm">
+          <div class="ask-head">
+            <label for="customQuestion">没有你的问题？自己问一句。</label>
+            <button class="random-button" id="randomBtn" type="button">随便替我问一个</button>
+          </div>
+          <div class="ask-line">
+            <input
+              id="customQuestion"
+              name="customQuestion"
+              type="text"
+              autocomplete="off"
+              placeholder="比如：我要不要辞职去开一家小店？"
+            />
+            <button class="primary-button" type="submit">丢进去</button>
+          </div>
+          <p id="matchHint">会自动匹配一条最接近的知乎式路径。</p>
+        </form>
+      </section>
+
+      <section class="play-view hidden" id="playView" aria-live="polite">
+        <button class="back-button" id="backBtn" type="button">返回星图</button>
+
+        <div class="play-shell">
+          <aside class="case-file">
+            <p class="kicker">匿名问题</p>
+            <h2 id="routeTitle"></h2>
+            <p id="routeLead"></p>
+            <div class="route-tags" id="routeTags"></div>
+            <div class="progress-card">
+              <span id="stepLabel">第 1 问</span>
+              <div class="progress-track"><i id="progressBar"></i></div>
+            </div>
+          </aside>
+
+          <section class="choice-stage">
+            <p class="question-note" id="questionNote">别想太久，选第一眼像你的。</p>
+            <h3 id="questionText"></h3>
+            <div class="option-grid" id="optionGrid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="result-view hidden" id="resultView" aria-live="polite">
+        <button class="back-button" id="resultBackBtn" type="button">再问一个</button>
+
+        <div class="result-layout">
+          <article class="answer-card" id="answerCard">
+            <p class="kicker">你的回声</p>
+            <h2 id="resultSide"></h2>
+            <p class="deep-question" id="deepQuestion"></p>
+
+            <div class="choice-trace" id="choiceTrace" aria-label="选择轨迹"></div>
+
+            <div class="zhihu-witness">
+              <span>知乎相似问题</span>
+              <a id="zhihuLink" href="#" target="_blank" rel="noreferrer"></a>
+              <p id="zhihuEcho"></p>
+              <div class="related-questions" id="relatedQuestions" aria-label="同一派问题"></div>
+            </div>
+
+            <blockquote id="finalLine"></blockquote>
+            <p class="next-step" id="nextStep"></p>
+          </article>
+
+          <aside class="share-lab">
+            <canvas id="shareCanvas" width="1080" height="1440" aria-label="结果卡片"></canvas>
+            <div class="share-actions">
+              <button class="primary-button" id="saveCardBtn" type="button">保存小卡片</button>
+              <button class="ghost-button" id="copyBtn" type="button">复制这句话</button>
+              <button class="ghost-button" id="moreLineBtn" type="button">再给我一句</button>
+              <button class="ghost-button" id="againBtn" type="button">换个问题</button>
+            </div>
+            <p id="shareHint">卡片会带上你的问题、知乎回声和最后那句话。</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
