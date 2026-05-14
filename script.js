@@ -1079,9 +1079,20 @@ function drawShareCard() {
   ctx.fillText("问一句，借一口气。", 118, 1210);
 }
 
+function shareUrlForResult() {
+  const base = "https://newrudy.github.io/zhihu-chuiniubi-judge/";
+  const params = new URLSearchParams();
+  if (state.customText && state.customText !== state.route?.title) {
+    params.set("ask", state.customText);
+  } else if (state.routeId) {
+    params.set("route", state.routeId);
+  }
+  const suffix = params.toString();
+  return suffix ? `${base}?${suffix}` : base;
+}
+
 async function copyResult() {
-  const appUrl = "https://newrudy.github.io/zhihu-chuiniubi-judge/";
-  const text = `${state.result.line}\n\n我在「知乎吹牛逼」问了：${state.result.title}\n${appUrl}`;
+  const text = `${state.result.line}\n\n我在「知乎吹牛逼」问了：${state.result.title}\n${shareUrlForResult()}`;
   try {
     await navigator.clipboard.writeText(text);
     $("#copyBtn").textContent = "已复制";

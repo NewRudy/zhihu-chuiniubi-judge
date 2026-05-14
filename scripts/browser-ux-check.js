@@ -73,6 +73,8 @@ async function run() {
   assert(canvasBox && canvasBox.width > 250 && canvasBox.height > 300, "share canvas should be visible");
   await page.getByRole("button", { name: "复制这句话" }).click();
   await expectVisible(page, "已复制", "copy feedback");
+  const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+  assert(clipboardText.includes("?route=quit"), `share text should deep-link route: ${clipboardText}`);
   const originalLine = await page.locator("#finalLine").innerText();
   await page.getByRole("button", { name: "再给我一句" }).click();
   const refreshedLine = await page.locator("#finalLine").innerText();
@@ -95,6 +97,9 @@ async function run() {
   await expectVisible(page, "我想辞职开咖啡店", "custom question");
   await answerCurrentRoute(page);
   await expectVisible(page, "保存小卡片", "share action");
+  await page.getByRole("button", { name: "复制这句话" }).click();
+  const customClipboardText = await page.evaluate(() => navigator.clipboard.readText());
+  assert(customClipboardText.includes("?ask="), `custom share text should deep-link ask: ${customClipboardText}`);
 
   await page.goto(`${BASE_URL}/?route=stock`);
   await expectVisible(page, "你最想从股市里拿到什么？", "route param");
